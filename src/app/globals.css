@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dark:    #0a100d;
+  --deep:    #0e1a12;
+  --card:    #162218;
+  --border:  #1e3224;
+  --yellow:  #f5c518;
+  --red:     #c0392b;
+  --live:    #e74c3c;
+  --muted:   #7a9c80;
+  --muted2:  #4a6e52;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: #e8f5ec;
+  font-family: var(--font-barlow), sans-serif;
+  min-height: 100vh;
+}
+
+/* ── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--deep); }
+::-webkit-scrollbar-thumb { background: #2a4a32; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a6a42; }
+
+/* ── Typography ────────────────────────────────── */
+.font-bebas  { font-family: var(--font-oswald), sans-serif; font-weight: 700; letter-spacing: 2px; }
+.font-oswald { font-family: var(--font-oswald), sans-serif; }
+.font-barlow { font-family: var(--font-barlow), sans-serif; }
+.font-barlow-condensed { font-family: var(--font-barlow-condensed), sans-serif; }
+
+/* ── Drapeau camerounais ───────────────────────── */
+.flag-strip {
+  height: 3px;
+  display: flex;
+}
+.flag-strip .fg { flex: 1; background: #009a44; }
+.flag-strip .fr { flex: 1; background: #ce1126; }
+.flag-strip .fy { flex: 1; background: #fcd116; }
+
+/* ── Animations ────────────────────────────────── */
+@keyframes blink        { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes pulse-live   {
+  0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.5)}
+  50%{box-shadow:0 0 0 8px rgba(231,76,60,0)}
+}
+@keyframes fade-up      { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slide-right  { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes spin-slow    { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+.animate-blink      { animation: blink 1s infinite; }
+.animate-pulse-live { animation: pulse-live 2s infinite; }
+.animate-fade-up    { animation: fade-up 0.6s ease both; }
+.animate-slide-right{ animation: slide-right 0.4s ease both; }
+
+/* ── Composants réutilisables ──────────────────── */
+.btn-primary {
+  @apply bg-cmr-yellow text-dark font-oswald font-bold tracking-widest uppercase
+         px-6 py-3 rounded text-sm transition-all duration-200
+         hover:bg-cmr-yellow2 hover:shadow-lg hover:-translate-y-0.5;
+}
+
+.btn-outline {
+  @apply border-2 border-cmr-yellow text-cmr-yellow font-oswald font-semibold
+         tracking-widest uppercase px-6 py-3 rounded text-sm transition-all duration-200
+         hover:bg-cmr-yellow hover:text-dark;
+}
+
+.card {
+  @apply bg-card border border-border rounded-lg;
+}
+
+.badge-live {
+  @apply bg-cmr-live text-white text-xs font-oswald tracking-widest
+         px-3 py-1 rounded-full;
+  animation: pulse-live 2s infinite;
+}
+.badge-live::before {
+  content: '●  ';
+  animation: blink 1s infinite;
+}
+
+.score-display {
+  font-family: var(--font-oswald);
+  font-weight: 700;
+  letter-spacing: 4px;
+}
+
+/* ── Table classement ──────────────────────────── */
+.standings-table thead th {
+  @apply bg-green-mid text-cmr-yellow font-oswald text-xs tracking-widest
+         uppercase py-3 px-3 text-center;
+}
+.standings-table tbody td {
+  @apply py-3 px-3 text-center bg-card border-b border-border text-sm;
+}
+.standings-table tbody tr:hover td { @apply bg-hover; }
+
+/* Zone indicators */
+.zone-qualif  td:first-child { border-left: 3px solid #27ae60; }
+.zone-playoff td:first-child { border-left: 3px solid #f5c518; }
+.zone-barrage td:first-child { border-left: 3px solid #e67e22; }
+.zone-relg    td:first-child { border-left: 3px solid #e74c3c; }
