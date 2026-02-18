@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
@@ -28,14 +28,12 @@ export async function middleware(request: NextRequest) {
   const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
   const isLoginPath = request.nextUrl.pathname === '/admin/login'
 
-  // Si on accède à /admin (pas /admin/login) sans être connecté → redirect login
   if (isAdminPath && !isLoginPath && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin/login'
     return NextResponse.redirect(url)
   }
 
-  // Si déjà connecté et on va sur /admin/login → redirect admin
   if (isLoginPath && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'
