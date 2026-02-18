@@ -152,6 +152,11 @@ export default function AdminPage() {
             <Link href="/" className="text-xs text-green-muted hover:text-cmr-yellow font-oswald tracking-wider transition-colors">
               ← Site public
             </Link>
+            <button
+              onClick={async () => { await supabase.auth.signOut(); window.location.href = '/admin/login' }}
+              className="text-xs text-red-400 hover:text-red-300 font-oswald tracking-wider transition-colors border border-red-900 px-3 py-1 rounded hover:border-red-700">
+              Déconnexion
+            </button>
           </div>
         </div>
       </header>
