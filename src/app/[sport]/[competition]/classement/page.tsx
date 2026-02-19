@@ -7,8 +7,6 @@ import { getSportConfig } from '@/lib/utils'
 import type { SportType, ClassementView } from '@/lib/supabase'
 
 export const revalidate = 60
-export const dynamic = "force-dynamic"
-export const dynamic = "force-dynamic"
 
 interface Props {
   params: Promise<{ sport: string; competition: string }>
