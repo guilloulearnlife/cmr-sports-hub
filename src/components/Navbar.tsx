@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Trophy, Calendar, Users, Settings, Zap } from 'lucide-react'
+import { Menu, X, Trophy, Calendar, Users, Settings, Zap, Code } from 'lucide-react'
 import { SPORT_CONFIG } from '@/lib/utils'
 import type { SportType } from '@/lib/supabase'
 
