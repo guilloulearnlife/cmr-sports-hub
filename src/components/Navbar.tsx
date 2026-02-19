@@ -69,6 +69,7 @@ export default function Navbar() {
           <NavLink href="/live" icon={<Zap size={15}/>} label="En Direct" live/>
           <NavLink href="/calendrier" icon={<Calendar size={15}/>} label="Calendrier"/>
           <NavLink href="/equipes" icon={<Users size={15}/>} label="Équipes"/>
+          <NavLink href="/api-doc" icon={<Code size={15}/>} label="API"/>
         </div>
 
         {/* Live badge */}
