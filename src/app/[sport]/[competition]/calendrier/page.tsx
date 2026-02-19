@@ -7,13 +7,15 @@ import { getSportConfig, formatDateLongue } from '@/lib/utils'
 import type { SportType, MatchView } from '@/lib/supabase'
 
 export const revalidate = 60
+export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic"
 
 interface Props {
-  params: { sport: string; competition: string }
+  params: Promise<{ sport: string; competition: string }>
 }
 
 export default async function CalendrierPage({ params }: Props) {
-  const { sport, competition } = params
+  const { sport, competition } = await params
 
   const { data: comp } = await supabase
     .from('competitions')

@@ -7,13 +7,15 @@ import { getSportConfig } from '@/lib/utils'
 import type { SportType, ClassementView } from '@/lib/supabase'
 
 export const revalidate = 60
+export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic"
 
 interface Props {
-  params: { sport: string; competition: string }
+  params: Promise<{ sport: string; competition: string }>
 }
 
 export default async function ClassementPage({ params }: Props) {
-  const { sport, competition } = params
+  const { sport, competition } = await params
 
   // Récupérer la compétition
   const { data: comp } = await supabase
