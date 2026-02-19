@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 export default async function EquipesPage() {
   const { data: clubs } = await supabase
     .from('clubs')
-    .select('id, nom, nom_court, sigle, sport, ville, couleur_maillot_dom, logo_url, actif')
+    .select('id, nom, nom_court, sigle, sport, ville, couleur_maillot_dom, logo_url, slug, actif')
     .eq('actif', true)
     .order('sport')
     .order('nom')
@@ -38,7 +38,8 @@ export default async function EquipesPage() {
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-3">
                   {clubsList.map((c: any) => (
-                    <div key={c.id} className="card p-4 text-center hover:border-green-mid transition-all">
+                    <Link key={c.id} href={`/club/${c.slug}`}
+                          className="card p-4 text-center hover:border-cmr-yellow transition-all block">
                       <div className="flex justify-center mb-3">
                         <ClubLogo
                           nom={c.nom}
@@ -50,7 +51,7 @@ export default async function EquipesPage() {
                       </div>
                       <div className="font-oswald text-xs tracking-wide text-white leading-tight">{c.nom_court ?? c.nom}</div>
                       <div className="text-xs text-green-dim mt-1">{c.ville}</div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </section>
