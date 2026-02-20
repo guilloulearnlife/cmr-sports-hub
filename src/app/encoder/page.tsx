@@ -21,7 +21,7 @@ export default function EncoderPage() {
     const { data } = await supabase
       .from('v_matchs')
       .select('*')
-      .in('statut', ['planifie', 'en_direct'])
+      .in('status', ['planifie', 'en_direct'])
       .order('date_match')
       .limit(30)
     setMatchs(data ?? [])
@@ -81,7 +81,7 @@ export default function EncoderPage() {
               <button key={m.id} onClick={() => { setSelected(m); setMsg(null) }}
                 style={{ background: '#1a4a2e', border: '1px solid #2d6a4f', borderRadius: 8, padding: '12px 16px', textAlign: 'left', cursor: 'pointer', color: '#fff' }}>
                 <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>
-                  {m.sport?.toUpperCase()} · J{m.journee} · {m.statut === 'en_direct' ? '🔴 LIVE' : '⏳ Planifié'}
+                  {m.sport?.toUpperCase()} · J{m.journee} · {m.status === 'en_direct' ? '🔴 LIVE' : '⏳ Planifié'}
                 </div>
                 <div style={{ fontSize: 15, fontWeight: 'bold' }}>{m.club_domicile_nom}</div>
                 <div style={{ fontSize: 13, color: '#9ca3af' }}>vs {m.club_exterieur_nom}</div>
