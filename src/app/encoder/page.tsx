@@ -104,6 +104,23 @@ export default function EncoderPage() {
       .order('date_match')
     setMatchs(data ?? [])
     setLoading(false)
+
+    // Recharger automatiquement le match en_direct si existant
+    const matchEnCours = (data ?? []).find((m: any) => m.statut === 'en_direct')
+    if (matchEnCours) {
+      setSelected(matchEnCours)
+      setScores({
+        dom: matchEnCours.dom_score ?? '',
+        ext: matchEnCours.ext_score ?? '',
+        statut: 'en_direct',
+        minute: matchEnCours.minute_actuelle ?? '',
+        periode: '1',
+        cj_dom: matchEnCours.cartons_jaunes_dom ?? 0,
+        cr_dom: matchEnCours.cartons_rouges_dom ?? 0,
+        cj_ext: matchEnCours.cartons_jaunes_ext ?? 0,
+        cr_ext: matchEnCours.cartons_rouges_ext ?? 0,
+      })
+    }
   }
 
   async function loadHistorique(userId: string) {
