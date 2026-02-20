@@ -140,6 +140,12 @@ export default function EncoderPage() {
 
   const maxMinute = scores.periode === 'prolongation' ? 120 : scores.periode === '2' ? 90 : 45
   const progressPct = Math.min(((parseInt(scores.minute) || 0) / maxMinute) * 100, 100)
+  // Verifier si le match peut etre lance
+  const maintenant = new Date()
+  const dateMatch = selected ? new Date(selected.date_match) : null
+  const diffMinutes = dateMatch ? (maintenant.getTime() - dateMatch.getTime()) / 60000 : -999
+  const matchDispo = diffMinutes >= -120 && diffMinutes <= 180
+
   const s = { minHeight: '100vh', background: '#0a100d', color: '#fff', fontFamily: 'Arial, sans-serif', padding: '16px', maxWidth: '480px', margin: '0 auto' }
 
   if (!user) return (
@@ -297,6 +303,11 @@ export default function EncoderPage() {
           </div>
 
           {/* Chronometre */}
+          {!matchDispo && dateMatch && (
+            <div style={{ background: '#1a3a5c', border: '1px solid #2563eb', borderRadius: 8, padding: '10px 12px', marginBottom: 12, fontSize: 12, color: '#93c5fd' }}>
+              ⏰ Match disponible le {dateMatch.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+            </div>
+          )}
           {scores.statut !== 'termine' && (
             <div style={{ marginBottom: 12, background: '#1a4a2e', borderRadius: 8, padding: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
@@ -307,7 +318,7 @@ export default function EncoderPage() {
                 <div style={{ background: scores.periode === '1' ? '#007a3d' : scores.periode === '2' ? '#f5c518' : '#ce1126', height: '100%', width: `${progressPct}%`, transition: 'width 1s', borderRadius: 4 }} />
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setRunning(true)} disabled={running}
+                <button onClick={() => setRunning(true)} disabled={running || !matchDispo}
                   style={{ flex: 1, padding: '10px', borderRadius: 8, background: running ? '#1a4a2e' : '#007a3d', border: running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.5 : 1 }}>
                   ▶ Start
                 </button>
@@ -342,7 +353,7 @@ export default function EncoderPage() {
             </div>
           )}
 
-          <button onClick={submit} disabled={sending || scores.dom === '' || scores.ext === ''}
+          <button onClick={submit} disabled={sending || scores.dom === '' || scores.ext === '' || !matchDispo}
             style={{ width: '100%', padding: '14px', borderRadius: 8, background: scores.dom === '' || scores.ext === '' ? '#2d6a4f' : '#f5c518', color: '#000', fontWeight: 'bold', fontSize: 16, border: 'none', cursor: 'pointer', marginBottom: 8 }}>
             {sending ? 'Envoi...' : scores.statut === 'termine' ? 'Soumettre score final' : 'Mettre a jour en direct'}
           </button>
