@@ -173,7 +173,8 @@ export default function EncoderPage() {
   const progressPct = Math.min(((parseInt(scores.minute) || 0) / maxMinute) * 100, 100)
   // Verifier si le match peut etre lance
   const maintenant = new Date()
-  const dateMatch = selected ? new Date(selected.date_match) : null
+  // Cameroun = WAT (UTC+1), Supabase stocke en UTC, on corrige +1h
+  const dateMatch = selected ? new Date(new Date(selected.date_match).getTime() - 60 * 60 * 1000) : null
   const diffMinutes = dateMatch ? (maintenant.getTime() - dateMatch.getTime()) / 60000 : -999
   const matchDispo = true
 
@@ -253,7 +254,7 @@ export default function EncoderPage() {
                         </div>
                         <div style={{ fontWeight: 'bold' }}>{m.dom_nom} vs {m.ext_nom}</div>
                         <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>
-                          {m.date_match ? new Date(m.date_match).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}
+                          {m.date_match ? new Date(m.date_match).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Douala' }) : ''}
                         </div>
                       </button>
                     ))}
