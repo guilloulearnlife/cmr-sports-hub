@@ -20,7 +20,7 @@ export default function ValidationPage() {
     const { data } = await supabase
       .from('v_matchs')
       .select('*')
-      .eq('status', 'en_attente')
+      .eq('statut', 'en_attente')
       .order('date_match')
     setMatchs(data ?? [])
     setLoading(false)

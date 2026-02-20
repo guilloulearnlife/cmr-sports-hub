@@ -21,7 +21,7 @@ export default function EncoderPage() {
     const { data } = await supabase
       .from('v_matchs')
       .select('*')
-      .in('status', ['planifie', 'en_direct'])
+      .in('statut', ['planifie', 'en_direct'])
       .order('date_match')
       .limit(30)
     setMatchs(data ?? [])
@@ -38,7 +38,7 @@ export default function EncoderPage() {
       .update({
         score_domicile: parseInt(scores.dom),
         score_exterieur: parseInt(scores.ext),
-        status: scores.statut,
+        statut: scores.statut,
       })
       .eq('id', selected.id)
 
