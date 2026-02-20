@@ -41,6 +41,7 @@ export default function EncoderPage() {
   })
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
+  const [running, setRunning] = useState(false)
   const [msg, setMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
   useEffect(() => {
@@ -52,6 +53,15 @@ export default function EncoderPage() {
       }
     })
   }, [])
+
+  // Timer chronometre
+  useEffect(() => {
+    if (!running) return
+    const interval = setInterval(() => {
+      setScores(p => ({ ...p, minute: String(Math.min(parseInt(p.minute || '0') + 1, 120)) }))
+    }, 60000)
+    return () => clearInterval(interval)
+  }, [running])
 
   async function login(e: React.FormEvent) {
     e.preventDefault()
@@ -113,7 +123,7 @@ export default function EncoderPage() {
       setMsg({ type: 'error', text: 'Erreur : ' + error.message })
     } else {
       setMsg({ type: 'success', text: estFinal ? 'Score final soumis ! En attente de validation.' : 'Score en direct mis a jour !' })
-      setSelected(null)
+      setRunning(false); setSelected(null)
       setScores({ dom: '', ext: '', statut: 'en_direct', minute: '', periode: '1', cj_dom: 0, cr_dom: 0, cj_ext: 0, cr_ext: 0 })
       loadMatchs(user.id)
       loadHistorique(user.id)
@@ -286,18 +296,29 @@ export default function EncoderPage() {
             </div>
           </div>
 
-          {/* Minute */}
+          {/* Chronometre */}
           {scores.statut !== 'termine' && (
             <div style={{ marginBottom: 12, background: '#1a4a2e', borderRadius: 8, padding: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <div style={{ fontSize: 13, color: '#9ca3af' }}>Minute</div>
-                <div style={{ fontSize: 20, fontWeight: 'bold', color: '#f5c518' }}>{scores.minute || '0'}'</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <div style={{ fontSize: 13, color: '#9ca3af' }}>Chronometre</div>
+                <div style={{ fontSize: 28, fontWeight: 'bold', color: '#f5c518', fontFamily: 'monospace' }}>{String(scores.minute || 0).padStart(2,'0')}'</div>
               </div>
-              <input type="range" min="0" max={maxMinute} value={scores.minute || 0}
-                onChange={e => setScores({ ...scores, minute: e.target.value })}
-                style={{ width: '100%', accentColor: '#f5c518', marginBottom: 6 }} />
-              <div style={{ background: '#0a100d', borderRadius: 4, height: 8, overflow: 'hidden' }}>
-                <div style={{ background: scores.periode === '1' ? '#007a3d' : scores.periode === '2' ? '#f5c518' : '#ce1126', height: '100%', width: `${progressPct}%`, transition: 'width 0.3s', borderRadius: 4 }} />
+              <div style={{ background: '#0a100d', borderRadius: 4, height: 8, overflow: 'hidden', marginBottom: 10 }}>
+                <div style={{ background: scores.periode === '1' ? '#007a3d' : scores.periode === '2' ? '#f5c518' : '#ce1126', height: '100%', width: `${progressPct}%`, transition: 'width 1s', borderRadius: 4 }} />
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => setRunning(true)} disabled={running}
+                  style={{ flex: 1, padding: '10px', borderRadius: 8, background: running ? '#1a4a2e' : '#007a3d', border: running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.5 : 1 }}>
+                  ▶ Start
+                </button>
+                <button onClick={() => setRunning(false)} disabled={!running}
+                  style={{ flex: 1, padding: '10px', borderRadius: 8, background: !running ? '#1a4a2e' : '#854d0e', border: !running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: !running ? 'not-allowed' : 'pointer', opacity: !running ? 0.5 : 1 }}>
+                  ⏸ Pause
+                </button>
+                <button onClick={() => { setRunning(false); setScores(p => ({...p, minute: '0'})) }}
+                  style={{ padding: '10px 14px', borderRadius: 8, background: '#1a4a2e', border: '1px solid #2d6a4f', color: '#9ca3af', fontWeight: 'bold', fontSize: 14, cursor: 'pointer' }}>
+                  ↺
+                </button>
               </div>
             </div>
           )}
@@ -325,7 +346,7 @@ export default function EncoderPage() {
             style={{ width: '100%', padding: '14px', borderRadius: 8, background: scores.dom === '' || scores.ext === '' ? '#2d6a4f' : '#f5c518', color: '#000', fontWeight: 'bold', fontSize: 16, border: 'none', cursor: 'pointer', marginBottom: 8 }}>
             {sending ? 'Envoi...' : scores.statut === 'termine' ? 'Soumettre score final' : 'Mettre a jour en direct'}
           </button>
-          <button onClick={() => { setSelected(null); setMsg(null) }}
+          <button onClick={() => { setRunning(false); setSelected(null); setMsg(null) }}
             style={{ width: '100%', padding: '12px', borderRadius: 8, background: 'transparent', color: '#9ca3af', border: '1px solid #2d6a4f', cursor: 'pointer', fontSize: 14 }}>
             Retour
           </button>
