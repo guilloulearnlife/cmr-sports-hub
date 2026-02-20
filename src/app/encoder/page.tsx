@@ -391,7 +391,7 @@ export default function EncoderPage() {
             </div>
           )}
 
-          <button onClick={submit} disabled={sending || (scores.dom === '' && scores.dom !== '0') || (scores.ext === '' && scores.ext !== '0')}
+          <button onClick={submit} disabled={sending}
             style={{ width: '100%', padding: '14px', borderRadius: 8, background: '#f5c518', color: '#000', fontWeight: 'bold', fontSize: 16, border: 'none', cursor: 'pointer', marginBottom: 8 }}>
             {sending ? 'Envoi...' : scores.statut === 'termine' ? 'Soumettre score final' : 'Mettre a jour en direct'}
           </button>
