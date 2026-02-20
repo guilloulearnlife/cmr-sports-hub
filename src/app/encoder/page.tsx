@@ -8,19 +8,33 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
 )
 
-function CartonCounter({ label, jaunes, rouges, onJaune, onRouge }: any) {
+function CartonCounter({ label, jaunes, rouges, onJaune, onRouge, onRetireJaune, onRetireRouge, actif }: any) {
   return (
-    <div style={{ background: '#0a100d', borderRadius: 8, padding: 10, flex: 1 }}>
+    <div style={{ background: '#0a100d', borderRadius: 8, padding: 10, flex: 1, opacity: actif ? 1 : 0.4 }}>
       <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 8, textAlign: 'center' }}>{label}</div>
       <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-        <button onClick={onJaune} style={{ background: '#854d0e', border: 'none', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <span style={{ fontSize: 16 }}>🟨</span>
-          <span style={{ fontSize: 13, fontWeight: 'bold', color: '#fbbf24' }}>{jaunes}</span>
-        </button>
-        <button onClick={onRouge} style={{ background: '#7f1d1d', border: 'none', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-          <span style={{ fontSize: 16 }}>🟥</span>
-          <span style={{ fontSize: 13, fontWeight: 'bold', color: '#f87171' }}>{rouges}</span>
-        </button>
+        {/* Carton jaune */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: 14 }}>🟨</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <button onClick={onRetireJaune} disabled={!actif || jaunes === 0}
+              style={{ background: jaunes > 0 && actif ? '#854d0e' : '#1a2e1e', border: 'none', borderRadius: 4, width: 22, height: 22, color: '#fbbf24', fontWeight: 'bold', cursor: jaunes > 0 && actif ? 'pointer' : 'not-allowed', fontSize: 16, lineHeight: 1 }}>-</button>
+            <span style={{ fontSize: 15, fontWeight: 'bold', color: '#fbbf24', minWidth: 16, textAlign: 'center' }}>{jaunes}</span>
+            <button onClick={onJaune} disabled={!actif}
+              style={{ background: actif ? '#854d0e' : '#1a2e1e', border: 'none', borderRadius: 4, width: 22, height: 22, color: '#fbbf24', fontWeight: 'bold', cursor: actif ? 'pointer' : 'not-allowed', fontSize: 16, lineHeight: 1 }}>+</button>
+          </div>
+        </div>
+        {/* Carton rouge */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: 14 }}>🟥</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <button onClick={onRetireRouge} disabled={!actif || rouges === 0}
+              style={{ background: rouges > 0 && actif ? '#7f1d1d' : '#1a2e1e', border: 'none', borderRadius: 4, width: 22, height: 22, color: '#f87171', fontWeight: 'bold', cursor: rouges > 0 && actif ? 'pointer' : 'not-allowed', fontSize: 16, lineHeight: 1 }}>-</button>
+            <span style={{ fontSize: 15, fontWeight: 'bold', color: '#f87171', minWidth: 16, textAlign: 'center' }}>{rouges}</span>
+            <button onClick={onRouge} disabled={!actif}
+              style={{ background: actif ? '#7f1d1d' : '#1a2e1e', border: 'none', borderRadius: 4, width: 22, height: 22, color: '#f87171', fontWeight: 'bold', cursor: actif ? 'pointer' : 'not-allowed', fontSize: 16, lineHeight: 1 }}>+</button>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -280,12 +294,18 @@ export default function EncoderPage() {
             <div style={{ display: 'flex', gap: 8 }}>
               <CartonCounter label={selected.dom_sigle}
                 jaunes={scores.cj_dom} rouges={scores.cr_dom}
+                actif={running || parseInt(scores.minute || '0') > 0}
                 onJaune={() => setScores(p => ({ ...p, cj_dom: p.cj_dom + 1 }))}
-                onRouge={() => setScores(p => ({ ...p, cr_dom: p.cr_dom + 1 }))} />
+                onRouge={() => setScores(p => ({ ...p, cr_dom: p.cr_dom + 1 }))}
+                onRetireJaune={() => setScores(p => ({ ...p, cj_dom: Math.max(0, p.cj_dom - 1) }))}
+                onRetireRouge={() => setScores(p => ({ ...p, cr_dom: Math.max(0, p.cr_dom - 1) }))} />
               <CartonCounter label={selected.ext_sigle}
                 jaunes={scores.cj_ext} rouges={scores.cr_ext}
+                actif={running || parseInt(scores.minute || '0') > 0}
                 onJaune={() => setScores(p => ({ ...p, cj_ext: p.cj_ext + 1 }))}
-                onRouge={() => setScores(p => ({ ...p, cr_ext: p.cr_ext + 1 }))} />
+                onRouge={() => setScores(p => ({ ...p, cr_ext: p.cr_ext + 1 }))}
+                onRetireJaune={() => setScores(p => ({ ...p, cj_ext: Math.max(0, p.cj_ext - 1) }))}
+                onRetireRouge={() => setScores(p => ({ ...p, cr_ext: Math.max(0, p.cr_ext - 1) }))} />
             </div>
           </div>
 
