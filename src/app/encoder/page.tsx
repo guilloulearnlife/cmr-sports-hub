@@ -158,7 +158,7 @@ export default function EncoderPage() {
   const maintenant = new Date()
   const dateMatch = selected ? new Date(selected.date_match) : null
   const diffMinutes = dateMatch ? (maintenant.getTime() - dateMatch.getTime()) / 60000 : -999
-  const matchDispo = diffMinutes >= -120 && diffMinutes <= 180
+  const matchDispo = true
 
   const s = { minHeight: '100vh', background: '#0a100d', color: '#fff', fontFamily: 'Arial, sans-serif', padding: '16px', maxWidth: '480px', margin: '0 auto' }
 
