@@ -1,3 +1,4 @@
+
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
@@ -30,12 +31,12 @@ export default function ValidationPage() {
     setProcessing(match.id)
     const { error } = await supabase
       .from('matchs')
-      .update({ status: 'termine' })
+      .update({ statut: 'termine' })
       .eq('id', match.id)
 
     if (!error) {
       await supabase.rpc('recalcule_classement', { p_competition_id: match.competition_id })
-      setMsg({ type: 'success', text: `✅ Score approuvé : ${match.club_domicile_nom} ${match.score_domicile} - ${match.score_exterieur} ${match.club_exterieur_nom}` })
+      setMsg({ type: 'success', text: `Score approuve : ${match.dom_nom} ${match.dom_score} - ${match.ext_score} ${match.ext_nom}` })
       loadMatchs()
     } else {
       setMsg({ type: 'error', text: 'Erreur : ' + error.message })
@@ -47,11 +48,11 @@ export default function ValidationPage() {
     setProcessing(match.id)
     const { error } = await supabase
       .from('matchs')
-      .update({ status: 'planifie', score_domicile: null, score_exterieur: null })
+      .update({ statut: 'planifie', score_domicile: null, score_exterieur: null })
       .eq('id', match.id)
 
     if (!error) {
-      setMsg({ type: 'error', text: `❌ Score rejeté : ${match.club_domicile_nom} vs ${match.club_exterieur_nom}` })
+      setMsg({ type: 'error', text: `Score rejete : ${match.dom_nom} vs ${match.ext_nom}` })
       loadMatchs()
     }
     setProcessing(null)
@@ -63,18 +64,19 @@ export default function ValidationPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">
-              ✅ VALIDATION SCORES
+              VALIDATION SCORES
             </h1>
             <p className="text-green-muted text-sm mt-1">
               {loading ? '...' : `${matchs.length} score(s) en attente`}
             </p>
           </div>
-          <Link href="/admin" className="btn-outline text-sm">← Admin</Link>
+          <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
         </div>
 
         {msg && (
           <div className={`mb-6 p-4 rounded ${msg.type === 'success' ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}`}>
             {msg.text}
+            <button onClick={() => setMsg(null)} className="ml-4 text-xs opacity-60">X</button>
           </div>
         )}
 
@@ -100,28 +102,24 @@ export default function ValidationPage() {
 
                 <div className="flex items-center justify-between gap-4 mb-6">
                   <div className="flex-1 text-center">
-                    <div className="font-oswald font-bold text-white">{m.club_domicile_nom}</div>
+                    <div className="font-oswald font-bold text-white">{m.dom_nom}</div>
                   </div>
                   <div className="text-4xl font-oswald font-bold text-cmr-yellow px-4">
-                    {m.score_domicile ?? '?'} - {m.score_exterieur ?? '?'}
+                    {m.dom_score ?? '?'} - {m.ext_score ?? '?'}
                   </div>
                   <div className="flex-1 text-center">
-                    <div className="font-oswald font-bold text-white">{m.club_exterieur_nom}</div>
+                    <div className="font-oswald font-bold text-white">{m.ext_nom}</div>
                   </div>
                 </div>
 
                 <div className="flex gap-3">
-                  <button
-                    onClick={() => approuver(m)}
-                    disabled={processing === m.id}
+                  <button onClick={() => approuver(m)} disabled={processing === m.id}
                     className="flex-1 py-3 rounded bg-green-700 hover:bg-green-600 text-white font-oswald tracking-wider text-sm transition-colors">
-                    {processing === m.id ? '...' : '✅ APPROUVER'}
+                    {processing === m.id ? '...' : 'APPROUVER'}
                   </button>
-                  <button
-                    onClick={() => rejeter(m)}
-                    disabled={processing === m.id}
+                  <button onClick={() => rejeter(m)} disabled={processing === m.id}
                     className="flex-1 py-3 rounded bg-red-900 hover:bg-red-800 text-white font-oswald tracking-wider text-sm transition-colors">
-                    {processing === m.id ? '...' : '❌ REJETER'}
+                    {processing === m.id ? '...' : 'REJETER'}
                   </button>
                 </div>
               </div>
@@ -132,4 +130,3 @@ export default function ValidationPage() {
     </div>
   )
 }
-
