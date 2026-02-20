@@ -176,7 +176,7 @@ export default function EncoderPage() {
   // Cameroun = WAT (UTC+1), Supabase stocke en UTC, on corrige +1h
   const dateMatch = selected ? new Date(new Date(selected.date_match).getTime() - 60 * 60 * 1000) : null
   const diffMinutes = dateMatch ? (maintenant.getTime() - dateMatch.getTime()) / 60000 : -999
-  const matchDispo = true
+  const matchDispo = diffMinutes >= -30 && diffMinutes <= 180
 
   const s = { minHeight: '100vh', background: '#0a100d', color: '#fff', fontFamily: 'Arial, sans-serif', padding: '16px', maxWidth: '480px', margin: '0 auto' }
 
