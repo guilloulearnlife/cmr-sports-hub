@@ -156,6 +156,8 @@ function AdminContent() {
             <button onClick={loadData} className="text-green-muted hover:text-cmr-yellow transition-colors">
               <RefreshCw size={16} className={loading ? 'animate-spin' : ''}/>
             </button>
+            <Link href="/admin/validation" className="text-xs text-green-muted hover:text-cmr-yellow font-oswald tracking-wider transition-colors">✅ Validation</Link>
+            <Link href="/admin/utilisateurs" className="text-xs text-green-muted hover:text-cmr-yellow font-oswald tracking-wider transition-colors">👥 Utilisateurs</Link>
             <Link href="/" className="text-xs text-green-muted hover:text-cmr-yellow font-oswald tracking-wider transition-colors">
               ← Site public
             </Link>
