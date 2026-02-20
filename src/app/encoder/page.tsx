@@ -38,7 +38,7 @@ export default function EncoderPage() {
       .update({
         score_domicile: parseInt(scores.dom),
         score_exterieur: parseInt(scores.ext),
-        statut: scores.statut,
+        status: scores.statut,
       })
       .eq('id', selected.id)
 
