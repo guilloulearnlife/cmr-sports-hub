@@ -75,6 +75,13 @@ function Dashboard() {
     {
       title: 'Planifier un Match',
       description: 'Créer un match et assigner un correspondant',
+      href: '/admin/competitions',
+      icon: <Trophy size={20}/>,
+      label: 'Compétitions',
+      desc: 'Gérer les compétitions',
+      color: 'text-blue-400',
+    },
+    {
       href: '/admin/matchs',
       icon: <Calendar size={28}/>,
       color: 'border-blue-500 text-blue-400',
