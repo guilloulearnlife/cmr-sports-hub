@@ -1,8 +1,3 @@
-
-Le fichier était déjà corrompu dans ce commit. Recréons-le directement :
-bashcd ~/Downloads/cmr-sports-hub
-
-cat > src/app/admin/competitions/page.tsx << 'EOF'
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -187,7 +182,7 @@ export default function CompetitionsPage() {
           <div className="divide-y divide-border">
             {competitions.map(c => (
               <div key={c.id} className="p-4 flex items-center gap-4 hover:bg-card/50 transition-colors">
-                <div className="text-2xl">{c.sport === 'football' ? '⚽' : c.sport === 'basketball' ? '🏀' : c.sport === 'volleyball' ? '🏐' : '🏆'}</div>
+                <div className="text-2xl">{c.sport === 'football' ? '\u26bd' : c.sport === 'basketball' ? '\ud83c\udfc0' : c.sport === 'volleyball' ? '\ud83c\udfd0' : '\ud83c\udfc6'}</div>
                 <div className="flex-1">
                   <div className="font-barlow-condensed font-semibold">{c.nom}</div>
                   <div className="text-xs text-green-muted mt-0.5">
@@ -201,10 +196,10 @@ export default function CompetitionsPage() {
                     <Pencil size={14}/>
                   </button>
                   <button onClick={() => toggleStatut(c)} className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors text-xs font-oswald">
-                    {c.statut === 'en_cours' ? '⏹' : '▶'}
+                    {c.statut === 'en_cours' ? '\u23f9' : '\u25b6'}
                   </button>
                   <Link href={`/${c.sport}/${c.slug}/classement`} className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors text-xs">
-                    👁
+                    \ud83d\udc41
                   </Link>
                 </div>
               </div>
