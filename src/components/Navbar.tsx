@@ -69,6 +69,7 @@ export default function Navbar() {
           <NavLink href="/live" icon={<Zap size={15}/>} label="En Direct" live/>
           <NavLink href="/calendrier" icon={<Calendar size={15}/>} label="Calendrier"/>
           <NavLink href="/equipes" icon={<Users size={15}/>} label="Équipes"/>
+          <NavLink href="/joueurs" icon={<Users size={15}/>} label="Joueurs"/>
           <NavLink href="/api-doc" icon={<Code size={15}/>} label="API"/>
           <NavLink href="/recherche" icon={<Search size={15}/>} label="Recherche"/>
         </div>
@@ -108,6 +109,9 @@ export default function Navbar() {
           })}
           <Link href="/live"    onClick={() => setOpen(false)} className="flex items-center gap-3 px-6 py-3 border-b border-border hover:bg-card">
             <Zap size={16} className="text-cmr-live"/><span className="font-oswald tracking-wide text-cmr-live">En Direct</span>
+          </Link>
+          <Link href="/joueurs" onClick={() => setOpen(false)} className="flex items-center gap-3 px-6 py-3 border-b border-border hover:bg-card">
+            <Users size={16} className="text-green-muted"/><span className="font-oswald tracking-wide">Joueurs</span>
           </Link>
           <Link href="/recherche" onClick={() => setOpen(false)} className="flex items-center gap-3 px-6 py-3 border-b border-border hover:bg-card">
             <Search size={16} className="text-green-muted"/><span className="font-oswald tracking-wide">Recherche</span>
