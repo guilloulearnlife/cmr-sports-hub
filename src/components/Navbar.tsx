@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Trophy, Calendar, Users, Settings, Zap, Code } from 'lucide-react'
+import { Menu, X, Trophy, Calendar, Users, Settings, Zap, Code, Search } from 'lucide-react'
 import { SPORT_CONFIG } from '@/lib/utils'
 import type { SportType } from '@/lib/supabase'
 
@@ -70,6 +70,7 @@ export default function Navbar() {
           <NavLink href="/calendrier" icon={<Calendar size={15}/>} label="Calendrier"/>
           <NavLink href="/equipes" icon={<Users size={15}/>} label="Équipes"/>
           <NavLink href="/api-doc" icon={<Code size={15}/>} label="API"/>
+          <NavLink href="/recherche" icon={<Search size={15}/>} label="Recherche"/>
         </div>
 
         {/* Live badge */}
@@ -107,6 +108,9 @@ export default function Navbar() {
           })}
           <Link href="/live"    onClick={() => setOpen(false)} className="flex items-center gap-3 px-6 py-3 border-b border-border hover:bg-card">
             <Zap size={16} className="text-cmr-live"/><span className="font-oswald tracking-wide text-cmr-live">En Direct</span>
+          </Link>
+          <Link href="/recherche" onClick={() => setOpen(false)} className="flex items-center gap-3 px-6 py-3 border-b border-border hover:bg-card">
+            <Search size={16} className="text-green-muted"/><span className="font-oswald tracking-wide">Recherche</span>
           </Link>
           <Link href="/admin"   onClick={() => setOpen(false)} className="flex items-center gap-3 px-6 py-3 hover:bg-card">
             <Settings size={16} className="text-green-muted"/><span className="font-oswald tracking-wide">Admin</span>
