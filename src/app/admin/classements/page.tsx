@@ -9,7 +9,15 @@ export default function ClassementsAdminPage() {
   const [loading, setLoading] = useState(true)
   const [filtreSport, setFiltreSport] = useState('')
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        window.location.href = '/admin/login'
+      } else {
+        loadData()
+      }
+    })
+  }, [])
 
   async function loadData() {
     setLoading(true)
@@ -17,6 +25,7 @@ export default function ClassementsAdminPage() {
       .from('competitions')
       .select('id, nom, sport, slug, statut, nb_journees, saison')
       .order('sport')
+      .order('nom')
     setCompetitions(data ?? [])
     setLoading(false)
   }
