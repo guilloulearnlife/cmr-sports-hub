@@ -1,7 +1,6 @@
 
-Il n'y a pas de page /admin/competitions. Créons-la :
+Le fichier était déjà corrompu dans ce commit. Recréons-le directement :
 bashcd ~/Downloads/cmr-sports-hub
-mkdir -p src/app/admin/competitions
 
 cat > src/app/admin/competitions/page.tsx << 'EOF'
 'use client'
@@ -27,9 +26,7 @@ export default function CompetitionsPage() {
     nb_journees: '30', federation_id: '', sponsor_principal: '',
   })
 
-  useEffect(() => {
-    loadData()
-  }, [])
+  useEffect(() => { loadData() }, [])
 
   async function loadData() {
     setLoading(true)
@@ -72,11 +69,10 @@ export default function CompetitionsPage() {
     const { error } = editId
       ? await supabase.from('competitions').update(payload).eq('id', editId)
       : await supabase.from('competitions').insert(payload)
-
     if (error) {
       setMessage({ type: 'err', text: 'Erreur : ' + error.message })
     } else {
-      setMessage({ type: 'ok', text: editId ? 'Compétition mise à jour !' : 'Compétition créée !' })
+      setMessage({ type: 'ok', text: editId ? 'Competition mise a jour !' : 'Competition creee !' })
       resetForm()
       loadData()
     }
@@ -99,13 +95,9 @@ export default function CompetitionsPage() {
     <div className="min-h-screen bg-dark p-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">COMPÉTITIONS</h1>
+          <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">COMPETITIONS</h1>
           <div className="flex gap-3">
-            {editId && (
-              <button onClick={resetForm} className="btn-outline text-sm flex items-center gap-2">
-                <X size={14}/> Annuler
-              </button>
-            )}
+            {editId && <button onClick={resetForm} className="btn-outline text-sm flex items-center gap-2"><X size={14}/> Annuler</button>}
             <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
           </div>
         </div>
@@ -118,10 +110,9 @@ export default function CompetitionsPage() {
           </div>
         )}
 
-        {/* Formulaire */}
         <form onSubmit={sauvegarder} className="card p-6 mb-8">
           <h2 className="font-oswald text-lg tracking-wider text-cmr-yellow mb-4">
-            {editId ? '✏️ Modifier la compétition' : '+ Nouvelle compétition'}
+            {editId ? 'Modifier la competition' : '+ Nouvelle competition'}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -133,7 +124,7 @@ export default function CompetitionsPage() {
               <input value={form.nom_court} onChange={e => setForm(p => ({ ...p, nom_court: e.target.value }))} className="form-input" placeholder="Elite One"/>
             </div>
             <div>
-              <label className="label-field">Slug (URL)</label>
+              <label className="label-field">Slug URL</label>
               <input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value }))} className="form-input" placeholder="elite-one-2024-2025"/>
             </div>
             <div>
@@ -162,16 +153,16 @@ export default function CompetitionsPage() {
               <label className="label-field">Statut</label>
               <select value={form.statut} onChange={e => setForm(p => ({ ...p, statut: e.target.value }))} className="form-select">
                 <option value="en_cours">En cours</option>
-                <option value="planifie">Planifiée</option>
-                <option value="termine">Terminée</option>
+                <option value="planifie">Planifiee</option>
+                <option value="termine">Terminee</option>
               </select>
             </div>
             <div>
-              <label className="label-field">Nb journées</label>
+              <label className="label-field">Nb journees</label>
               <input type="number" value={form.nb_journees} onChange={e => setForm(p => ({ ...p, nb_journees: e.target.value }))} className="form-input" placeholder="30"/>
             </div>
             <div>
-              <label className="label-field">Fédération</label>
+              <label className="label-field">Federation</label>
               <select value={form.federation_id} onChange={e => setForm(p => ({ ...p, federation_id: e.target.value }))} className="form-select">
                 <option value="">-- Aucune --</option>
                 {federations.map(f => <option key={f.id} value={f.id}>{f.nom_court} ({f.sport})</option>)}
@@ -184,14 +175,13 @@ export default function CompetitionsPage() {
           </div>
           <button type="submit" disabled={saving} className="btn-primary mt-6 flex items-center gap-2">
             {saving ? <RefreshCw size={16} className="animate-spin"/> : <Plus size={16}/>}
-            {saving ? 'Sauvegarde...' : editId ? 'Mettre à jour' : 'Créer la compétition'}
+            {saving ? 'Sauvegarde...' : editId ? 'Mettre a jour' : 'Creer la competition'}
           </button>
         </form>
 
-        {/* Liste */}
         <div className="card overflow-hidden">
           <div className="p-4 border-b border-border flex items-center justify-between">
-            <h2 className="font-oswald tracking-wider text-white">Toutes les compétitions ({competitions.length})</h2>
+            <h2 className="font-oswald tracking-wider text-white">Toutes les competitions ({competitions.length})</h2>
             {loading && <RefreshCw size={16} className="animate-spin text-cmr-yellow"/>}
           </div>
           <div className="divide-y divide-border">
@@ -205,20 +195,15 @@ export default function CompetitionsPage() {
                     {c.federations?.nom_court && ` · ${c.federations.nom_court}`}
                   </div>
                 </div>
-                <span className={`text-xs font-oswald px-2 py-1 rounded border ${STATUT_COLOR[c.statut] ?? ''}`}>
-                  {c.statut}
-                </span>
+                <span className={`text-xs font-oswald px-2 py-1 rounded border ${STATUT_COLOR[c.statut] ?? ''}`}>{c.statut}</span>
                 <div className="flex gap-2">
-                  <button onClick={() => startEdit(c)}
-                    className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors">
+                  <button onClick={() => startEdit(c)} className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors">
                     <Pencil size={14}/>
                   </button>
-                  <button onClick={() => toggleStatut(c)}
-                    className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors text-xs font-oswald">
+                  <button onClick={() => toggleStatut(c)} className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors text-xs font-oswald">
                     {c.statut === 'en_cours' ? '⏹' : '▶'}
                   </button>
-                  <Link href={`/${c.sport}/${c.slug}/classement`}
-                    className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors text-xs">
+                  <Link href={`/${c.sport}/${c.slug}/classement`} className="p-2 rounded border border-border text-green-muted hover:border-cmr-yellow hover:text-cmr-yellow transition-colors text-xs">
                     👁
                   </Link>
                 </div>
@@ -228,9 +213,10 @@ export default function CompetitionsPage() {
         </div>
       </div>
       <style jsx global>{`
-        .label-field { display: block; font-size: 11px; color: #6b9e7e; font-family: 'Oswald', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-        .form-input { width: 100%; background: #0e1a12; border: 1px solid #1e3224; border-radius: 6px; padding: 8px 12px; color: white; font-size: 14px; outline: none; }
-        .form-select { width: 100%; background: #0e1a12; border: 1px solid #1e3224; border-radius: 6px; padding: 8px 12px; color: white; font-size: 14px; outline: none; }
+        .label-field { display:block; font-size:11px; color:#6b9e7e; font-family:'Oswald',sans-serif; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:6px; }
+        .form-input { width:100%; background:#0e1a12; border:1px solid #1e3224; border-radius:6px; padding:8px 12px; color:white; font-size:14px; outline:none; }
+        .form-select { width:100%; background:#0e1a12; border:1px solid #1e3224; border-radius:6px; padding:8px 12px; color:white; font-size:14px; outline:none; }
       `}</style>
     </div>
   )
+}
