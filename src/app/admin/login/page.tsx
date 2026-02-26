@@ -29,7 +29,7 @@ export default function LoginPage() {
       .eq('id', data.user.id)
       .single()
 
-    if (!profile || !['super_admin','admin_federation','admin_competition','operateur_match'].includes(profile.role)) {
+    if (!profile || !['super_admin', 'admin_regional', 'admin_federation', 'admin_competition', 'operateur_match'].includes(profile.role)) {
       await supabase.auth.signOut()
       setError('Accès refusé. Vous n\'avez pas les droits administrateur.')
       setLoading(false)
