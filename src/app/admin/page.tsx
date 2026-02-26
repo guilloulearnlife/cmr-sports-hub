@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Settings, RefreshCw, Trophy, Calendar, Users, CheckCircle, UserPlus, BarChart2, Globe, Smartphone } from 'lucide-react'
+import { Settings, RefreshCw, Trophy, Calendar, Users, CheckCircle, UserPlus, BarChart2, Globe, Smartphone, Shield } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 export default function AdminPage() {
@@ -74,37 +74,39 @@ function Dashboard() {
     },
     {
       title: 'Planifier un Match',
-      description: 'Créer un match et assigner un correspondant',
-      href: '/admin/competitions',
-      icon: <Trophy size={20}/>,
-      label: 'Compétitions',
-      desc: 'Gérer les compétitions',
-      color: 'text-blue-400',
-    },
-    {
+      description: 'Creer un match et assigner un correspondant',
       href: '/admin/matchs',
       icon: <Calendar size={28}/>,
       color: 'border-blue-500 text-blue-400',
       bg: 'hover:bg-blue-900/20',
     },
     {
-      title: 'Gérer les Clubs',
+      title: 'Competitions',
+      description: 'Creer et gerer les competitions',
+      href: '/admin/competitions',
+      icon: <Trophy size={28}/>,
+      color: 'border-cyan-500 text-cyan-400',
+      bg: 'hover:bg-cyan-900/20',
+    },
+    {
+      title: 'Gerer les Clubs',
       description: 'Ajouter ou modifier des clubs',
       href: '/admin/clubs',
-      icon: <Users size={28}/>,
+      icon: <Shield size={28}/>,
       color: 'border-purple-500 text-purple-400',
       bg: 'hover:bg-purple-900/20',
     },
     {
-      title: 'Utilisateurs',
-      description: 'Gérer correspondants et admins régionaux',
+      title: 'Joueurs',
+      description: 'Gerer les joueurs et leurs profils',
       href: '/admin/joueurs',
-      icon: <Users size={20}/>,
-      label: 'Joueurs',
-      desc: 'Gerer les joueurs',
-      color: 'text-purple-400',
+      icon: <Users size={28}/>,
+      color: 'border-pink-500 text-pink-400',
+      bg: 'hover:bg-pink-900/20',
     },
     {
+      title: 'Utilisateurs',
+      description: 'Gerer correspondants et admins regionaux',
       href: '/admin/utilisateurs',
       icon: <UserPlus size={28}/>,
       color: 'border-orange-500 text-orange-400',
@@ -112,11 +114,11 @@ function Dashboard() {
     },
     {
       title: 'Classements',
-      description: 'Voir et recalculer les classements',
+      description: 'Voir les classements des competitions',
       href: '/football/elite-one/classement',
       icon: <BarChart2 size={28}/>,
-      color: 'border-pink-500 text-pink-400',
-      bg: 'hover:bg-pink-900/20',
+      color: 'border-red-500 text-red-400',
+      bg: 'hover:bg-red-900/20',
     },
     {
       title: 'Site Public',
@@ -149,18 +151,17 @@ function Dashboard() {
           </div>
           <button onClick={deconnexion}
                   className="text-xs text-red-400 hover:text-red-300 font-oswald tracking-wider transition-colors border border-red-900 px-3 py-1 rounded hover:border-red-700">
-            Déconnexion
+            Deconnexion
           </button>
         </div>
       </header>
 
       <div className="max-w-screen-lg mx-auto px-4 py-8">
-        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-10">
           {[
-            { label: 'Compétitions', val: stats.competitions, color: 'text-cmr-yellow' },
+            { label: 'Competitions', val: stats.competitions, color: 'text-cmr-yellow' },
             { label: 'Clubs', val: stats.clubs, color: 'text-green-400' },
-            { label: 'Matchs à jouer', val: stats.matchs, color: 'text-blue-400' },
+            { label: 'Matchs a jouer', val: stats.matchs, color: 'text-blue-400' },
             { label: 'En attente', val: stats.enAttente, color: stats.enAttente > 0 ? 'text-red-400' : 'text-green-muted' },
             { label: 'Correspondants', val: stats.correspondants, color: 'text-orange-400' },
           ].map(s => (
@@ -171,7 +172,6 @@ function Dashboard() {
           ))}
         </div>
 
-        {/* Cards navigation */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {sections.map(s => (
             <Link key={s.href} href={s.href}
@@ -181,7 +181,7 @@ function Dashboard() {
                   {s.badge}
                 </span>
               )}
-              <div className={`mb-3 ${s.color.split(' ')[1]}`}>{s.icon}</div>
+              <div className="mb-3">{s.icon}</div>
               <div className="font-oswald font-bold text-white tracking-wider mb-1">{s.title}</div>
               <div className="text-xs text-green-muted">{s.description}</div>
             </Link>
