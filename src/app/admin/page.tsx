@@ -98,6 +98,13 @@ function Dashboard() {
     {
       title: 'Utilisateurs',
       description: 'Gérer correspondants et admins régionaux',
+      href: '/admin/joueurs',
+      icon: <Users size={20}/>,
+      label: 'Joueurs',
+      desc: 'Gerer les joueurs',
+      color: 'text-purple-400',
+    },
+    {
       href: '/admin/utilisateurs',
       icon: <UserPlus size={28}/>,
       color: 'border-orange-500 text-orange-400',
