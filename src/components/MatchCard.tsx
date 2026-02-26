@@ -16,8 +16,8 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
   const sport     = getSportConfig(match.sport)
 
   return (
-    <div className={clsx(
-      'card transition-all duration-200 hover:border-green-mid overflow-hidden group',
+    <Link href={`/match/${match.id}`} className={clsx(
+      'card transition-all duration-200 hover:border-green-mid overflow-hidden group block cursor-pointer',
       isLive && 'border-cmr-live/40 hover:border-cmr-live/70',
     )}>
       {/* Barre live */}
@@ -129,7 +129,7 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
           </div>
         )}
       </div>
-    </div>
+    </Link>
   )
 }
 
