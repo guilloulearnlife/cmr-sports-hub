@@ -1,42 +1,21 @@
-'use client'
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { RefreshCw, BarChart2, ExternalLink } from 'lucide-react'
+import { BarChart2, ExternalLink } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
-export default function ClassementsAdminPage() {
-  const [competitions, setCompetitions] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filtreSport, setFiltreSport] = useState('')
+export const dynamic = 'force-dynamic'
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
-        window.location.href = '/admin/login'
-      } else {
-        loadData()
-      }
-    })
-  }, [])
+const SPORT_EMOJI: Record<string, string> = {
+  football: '⚽', basketball: '🏀', volleyball: '🏐', handball: '🤾',
+  billard: '🎱', boxe: '🥊', athletisme: '🏃',
+}
 
-  async function loadData() {
-    setLoading(true)
-    const { data } = await supabase
-      .from('competitions')
-      .select('id, nom, sport, slug, statut, nb_journees, saison')
-      .order('sport')
-      .order('nom')
-    setCompetitions(data ?? [])
-    setLoading(false)
-  }
+export default async function ClassementsAdminPage() {
+  const { data: competitions } = await supabase
+    .from('competitions')
+    .select('id, nom, sport, slug, statut, nb_journees, saison')
+    .order('sport')
 
-  const sports = [...new Set(competitions.map(c => c.sport))]
-  const filtrees = filtreSport ? competitions.filter(c => c.sport === filtreSport) : competitions
-
-  const SPORT_EMOJI: Record<string, string> = {
-    football: '⚽', basketball: '🏀', volleyball: '🏐', handball: '🤾',
-    billard: '🎱', boxe: '🥊', athletisme: '🏃',
-  }
+  const sports = [...new Set((competitions ?? []).map((c: any) => c.sport))]
 
   return (
     <div className="min-h-screen bg-dark p-6">
@@ -49,23 +28,8 @@ export default function ClassementsAdminPage() {
           <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
         </div>
 
-        <div className="card p-4 mb-6 flex flex-wrap gap-3 items-center">
-          <span className="text-xs text-green-muted font-oswald tracking-wider">Filtrer par sport :</span>
-          <button onClick={() => setFiltreSport('')}
-            className={`px-3 py-1.5 rounded text-xs font-oswald tracking-wider border transition-colors ${!filtreSport ? 'bg-cmr-yellow text-dark border-cmr-yellow' : 'border-border text-green-muted hover:border-cmr-yellow'}`}>
-            Tous
-          </button>
-          {sports.map(s => (
-            <button key={s} onClick={() => setFiltreSport(s)}
-              className={`px-3 py-1.5 rounded text-xs font-oswald tracking-wider border transition-colors ${filtreSport === s ? 'bg-cmr-yellow text-dark border-cmr-yellow' : 'border-border text-green-muted hover:border-cmr-yellow'}`}>
-              {SPORT_EMOJI[s]} {s}
-            </button>
-          ))}
-          {loading && <RefreshCw size={14} className="animate-spin text-cmr-yellow ml-auto"/>}
-        </div>
-
         <div className="space-y-3">
-          {filtrees.map(c => (
+          {(competitions ?? []).map((c: any) => (
             <div key={c.id} className="card p-4 flex items-center gap-4 hover:border-green-mid transition-colors">
               <div className="text-2xl">{SPORT_EMOJI[c.sport] ?? '🏆'}</div>
               <div className="flex-1">
@@ -87,7 +51,7 @@ export default function ClassementsAdminPage() {
               </div>
             </div>
           ))}
-          {filtrees.length === 0 && !loading && (
+          {(!competitions || competitions.length === 0) && (
             <div className="card p-12 text-center text-green-muted font-oswald tracking-wider">
               Aucune competition trouvee
             </div>
