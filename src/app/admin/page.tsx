@@ -115,7 +115,7 @@ function Dashboard() {
     {
       title: 'Classements',
       description: 'Voir les classements des competitions',
-      href: '/football/elite-one/classement',
+      href: '/admin/classements',
       icon: <BarChart2 size={28}/>,
       color: 'border-red-500 text-red-400',
       bg: 'hover:bg-red-900/20',
