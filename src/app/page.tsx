@@ -195,9 +195,7 @@ export default async function HomePage() {
             <p className="text-green-muted max-w-md mx-auto">
               La base de données est configurée. Commence par ajouter des clubs, planifier des matchs et encoder des scores depuis le panneau admin.
             </p>
-            <Link href="/admin" className="btn-primary inline-flex items-center gap-2 mt-6">
-              Aller dans Admin →
-            </Link>
+
           </div>
         )}
       </div>
@@ -213,8 +211,7 @@ export default async function HomePage() {
             <div className="flex gap-6 text-xs text-green-dim font-oswald tracking-wider">
               <Link href="/about"  className="hover:text-cmr-yellow transition-colors">À propos</Link>
               <Link href="/api"    className="hover:text-cmr-yellow transition-colors">API</Link>
-              <Link href="/admin"  className="hover:text-cmr-yellow transition-colors">Admin</Link>
-              <span>n8n Automation ✓</span>
+
             </div>
           </div>
         </div>
