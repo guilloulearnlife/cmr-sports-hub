@@ -209,6 +209,8 @@ export default async function HomePage() {
               <div className="text-xs text-green-dim mt-1">© 2026 — Toutes les compétitions nationales du Cameroun</div>
             </div>
             <div className="flex gap-6 text-xs text-green-dim font-oswald tracking-wider">
+              <Link href="/about" className="hover:text-cmr-yellow transition-colors">À propos</Link>
+              <Link href="/api-doc" className="hover:text-cmr-yellow transition-colors">API</Link>
 
 
             </div>
