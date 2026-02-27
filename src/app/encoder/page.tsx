@@ -433,17 +433,17 @@ export default function EncoderPage() {
                   <CartonCounter label={selected.dom_sigle}
                     jaunes={scores.cj_dom} rouges={scores.cr_dom}
                     actif={running || parseInt(scores.minute || '0') > 0}
-                    onJaune={() => setScores(p => ({ ...p, cj_dom: p.cj_dom + 1 }))}
-                    onRouge={() => setScores(p => ({ ...p, cr_dom: p.cr_dom + 1 }))}
-                    onRetireJaune={() => setScores(p => ({ ...p, cj_dom: Math.max(0, p.cj_dom - 1) }))}
-                    onRetireRouge={() => setScores(p => ({ ...p, cr_dom: Math.max(0, p.cr_dom - 1) }))} />
+                    onJaune={() => setScores((p: any) => ({ ...p, cj_dom: p.cj_dom + 1 }))}
+                    onRouge={() => setScores((p: any) => ({ ...p, cr_dom: p.cr_dom + 1 }))}
+                    onRetireJaune={() => setScores((p: any) => ({ ...p, cj_dom: Math.max(0, p.cj_dom - 1) }))}
+                    onRetireRouge={() => setScores((p: any) => ({ ...p, cr_dom: Math.max(0, p.cr_dom - 1) }))} />
                   <CartonCounter label={selected.ext_sigle}
                     jaunes={scores.cj_ext} rouges={scores.cr_ext}
                     actif={running || parseInt(scores.minute || '0') > 0}
-                    onJaune={() => setScores(p => ({ ...p, cj_ext: p.cj_ext + 1 }))}
-                    onRouge={() => setScores(p => ({ ...p, cr_ext: p.cr_ext + 1 }))}
-                    onRetireJaune={() => setScores(p => ({ ...p, cj_ext: Math.max(0, p.cj_ext - 1) }))}
-                    onRetireRouge={() => setScores(p => ({ ...p, cr_ext: Math.max(0, p.cr_ext - 1) }))} />
+                    onJaune={() => setScores((p: any) => ({ ...p, cj_ext: p.cj_ext + 1 }))}
+                    onRouge={() => setScores((p: any) => ({ ...p, cr_ext: p.cr_ext + 1 }))}
+                    onRetireJaune={() => setScores((p: any) => ({ ...p, cj_ext: Math.max(0, p.cj_ext - 1) }))}
+                    onRetireRouge={() => setScores((p: any) => ({ ...p, cr_ext: Math.max(0, p.cr_ext - 1) }))} />
                 </div>
               </div>
 
@@ -484,7 +484,7 @@ export default function EncoderPage() {
                       style={{ flex: 1, padding: '10px', borderRadius: 8, background: !running ? '#1a4a2e' : '#854d0e', border: !running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: !running ? 'not-allowed' : 'pointer', opacity: !running ? 0.5 : 1 }}>
                       ⏸ Pause
                     </button>
-                    <button onClick={() => { setRunning(false); setScores(p => ({...p, minute: '0'})) }}
+                    <button onClick={() => { setRunning(false); setScores((p: any) => ({...p, minute: '0'})) }}
                       style={{ padding: '10px 14px', borderRadius: 8, background: '#1a4a2e', border: '1px solid #2d6a4f', color: '#9ca3af', fontWeight: 'bold', fontSize: 14, cursor: 'pointer' }}>
                       ↺
                     </button>
