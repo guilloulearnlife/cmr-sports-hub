@@ -22,22 +22,27 @@ export default function MatchsPage() {
   const clubsFiltres = sportSelectionne ? clubs.filter(c => c.sport === sportSelectionne) : clubs
 
   useEffect(() => {
-    Promise.all([
-      supabase.from('competitions').select('*').eq('statut', 'en_cours').order('sport'),
-      supabase.from('clubs').select('*').eq('actif', true).order('nom'),
-supabase.auth.getSession().then(async ({ data: sessionData }) => {
-        const { data: currentProfile } = await supabase.from('profiles').select('role, id').eq('id', sessionData.session?.user.id ?? '').single()
-        let q = supabase.from('profiles').select('*').eq('role', 'correspondant').order('email')
-        if (currentProfile?.role === 'admin_regional') {
-          q = q.eq('created_by', currentProfile.id)
-        }
-        return q
-      }).then(p => p),
-    ]).then(([c, cl, co]) => {
+    async function load() {
+      const [c, cl] = await Promise.all([
+        supabase.from('competitions').select('*').eq('statut', 'en_cours').order('sport'),
+        supabase.from('clubs').select('*').eq('actif', true).order('nom'),
+      ])
       setCompetitions(c.data ?? [])
       setClubs(cl.data ?? [])
-      setCorrespondants(co.data ?? [])
-    })
+
+      // Charger correspondants selon le role
+      const { data: sessionData } = await supabase.auth.getSession()
+      const { data: currentProfile } = await supabase.from('profiles')
+        .select('role, id').eq('id', sessionData.session?.user.id ?? '').single()
+      
+      let q = supabase.from('profiles').select('*').eq('role', 'correspondant').order('email')
+      if (currentProfile?.role === 'admin_regional') {
+        q = (q as any).eq('created_by', currentProfile.id)
+      }
+      const { data: co } = await q
+      setCorrespondants(co ?? [])
+    }
+    load()
   }, [])
 
   async function creerMatch(e: React.FormEvent) {
