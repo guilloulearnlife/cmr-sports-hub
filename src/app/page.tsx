@@ -135,7 +135,7 @@ export default async function HomePage() {
         <section>
           <SectionHeader
             icon={<Trophy size={18} className="text-cmr-yellow"/>}
-            title="Compétitions Nationales 2024-2025"
+            title="Compétitions Nationales 2025-2026"
             href="/competitions"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -206,7 +206,7 @@ export default async function HomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <div className="font-oswald text-cmr-yellow font-bold tracking-widest text-lg">CMR SPORTS HUB</div>
-              <div className="text-xs text-green-dim mt-1">© 2025 — Toutes les compétitions nationales du Cameroun</div>
+              <div className="text-xs text-green-dim mt-1">© 2026 — Toutes les compétitions nationales du Cameroun</div>
             </div>
             <div className="flex gap-6 text-xs text-green-dim font-oswald tracking-wider">
               <Link href="/about"  className="hover:text-cmr-yellow transition-colors">À propos</Link>
