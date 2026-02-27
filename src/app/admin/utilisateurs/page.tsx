@@ -19,17 +19,30 @@ const REGIONS = [
 export default function UtilisateursPage() {
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string)
   const [users, setUsers] = useState<any[]>([])
+  const [currentUserRole, setCurrentUserRole] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ email: '', password: '', role: 'correspondant', region_id: '' })
   const [msg, setMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [creating, setCreating] = useState(false)
 
   useEffect(() => {
-    loadUsers()
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) { window.location.href = '/admin/login'; return }
+      const { data: p } = await supabase.from('profiles').select('role').eq('id', data.session.user.id).single()
+      setCurrentUserRole(p?.role ?? '')
+      loadUsers()
+    })
   }, [])
 
   async function loadUsers() {
-    const { data } = await supabase.from('profiles').select('*').order('role')
+    const { data: session } = await supabase.auth.getSession()
+    const { data: p } = await supabase.from('profiles').select('role').eq('id', session.session?.user.id ?? '').single()
+    let query = supabase.from('profiles').select('*').order('role')
+    // Admin regional ne voit que les correspondants
+    if (p?.role === 'admin_regional') {
+      query = query.eq('role', 'correspondant')
+    }
+    const { data } = await query
     setUsers(data ?? [])
     setLoading(false)
   }
@@ -99,7 +112,7 @@ export default function UtilisateursPage() {
               className="bg-deep border border-border rounded px-3 py-2 text-white text-sm"
             >
               <option value="correspondant">Correspondant</option>
-              <option value="admin_regional">Admin Régional</option>
+              {currentUserRole === 'super_admin' && <option value="admin_regional">Admin Régional</option>}
             </select>
             <select
               value={form.region_id}
@@ -149,7 +162,7 @@ export default function UtilisateursPage() {
                         className="bg-deep border border-border rounded px-2 py-1 text-white text-xs"
                       >
                         <option value="correspondant">Correspondant</option>
-                        <option value="admin_regional">Admin Régional</option>
+                        {currentUserRole === 'super_admin' && <option value="admin_regional">Admin Régional</option>}
                       </select>
                       <select
                         defaultValue={u.region_id ?? ''}
