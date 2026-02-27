@@ -40,6 +40,94 @@ function CartonCounter({ label, jaunes, rouges, onJaune, onRouge, onRetireJaune,
   )
 }
 
+
+function BillardEncoder({ domNom, extNom, detail, onChange, actif }: any) {
+  const matchTypes = [
+    { key: 'M1', label: 'Messieurs 1', format: '1er a 7', icon: '🎱' },
+    { key: 'M2', label: 'Messieurs 2', format: '1er a 7', icon: '🎱' },
+    { key: 'M3', label: 'Messieurs 3', format: '1er a 7', icon: '🎱' },
+    { key: 'DA', label: 'Dames', format: '1ere a 5', icon: '🎱' },
+    { key: 'MX', label: 'Double Mixte', format: '1er a 5', icon: '🎱' },
+  ]
+
+  function toggle(idx: number, winner: 'dom' | 'ext') {
+    const newDetail = [...detail]
+    if (!newDetail[idx]) newDetail[idx] = {}
+    if (newDetail[idx][winner]) {
+      // Deselectionner
+      newDetail[idx] = {}
+    } else {
+      // Selectionner ce gagnant
+      newDetail[idx] = { dom: winner === 'dom', ext: winner === 'ext' }
+    }
+    onChange(newDetail)
+  }
+
+  const domTotal = detail.filter((d: any) => d?.dom).length
+  const extTotal = detail.filter((d: any) => d?.ext).length
+
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 10 }}>
+        Resultats des 5 matchs — cliquer sur le gagnant
+      </div>
+      {matchTypes.map((mt, idx) => (
+        <div key={mt.key} style={{
+          background: detail[idx]?.dom || detail[idx]?.ext ? '#0f2a1a' : '#1a4a2e',
+          border: '1px solid #2d6a4f', borderRadius: 8, padding: '10px 12px', marginBottom: 8,
+          display: 'flex', alignItems: 'center', gap: 8
+        }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 12, fontWeight: 'bold', color: '#f5c518' }}>{mt.key} — {mt.label}</div>
+            <div style={{ fontSize: 10, color: '#6b7280' }}>{mt.format}</div>
+          </div>
+          <button
+            onClick={() => actif && toggle(idx, 'dom')}
+            style={{
+              padding: '8px 14px', borderRadius: 8, border: '2px solid',
+              borderColor: detail[idx]?.dom ? '#007a3d' : '#2d6a4f',
+              background: detail[idx]?.dom ? '#007a3d' : '#0a100d',
+              color: detail[idx]?.dom ? '#fff' : '#9ca3af',
+              fontWeight: 'bold', fontSize: 12, cursor: actif ? 'pointer' : 'not-allowed',
+              opacity: actif ? 1 : 0.5, minWidth: 70, textAlign: 'center'
+            }}>
+            {detail[idx]?.dom ? '✓ ' : ''}{domNom}
+          </button>
+          <div style={{ color: '#6b7280', fontSize: 12 }}>vs</div>
+          <button
+            onClick={() => actif && toggle(idx, 'ext')}
+            style={{
+              padding: '8px 14px', borderRadius: 8, border: '2px solid',
+              borderColor: detail[idx]?.ext ? '#ce1126' : '#2d6a4f',
+              background: detail[idx]?.ext ? '#ce1126' : '#0a100d',
+              color: detail[idx]?.ext ? '#fff' : '#9ca3af',
+              fontWeight: 'bold', fontSize: 12, cursor: actif ? 'pointer' : 'not-allowed',
+              opacity: actif ? 1 : 0.5, minWidth: 70, textAlign: 'center'
+            }}>
+            {detail[idx]?.ext ? '✓ ' : ''}{extNom}
+          </button>
+        </div>
+      ))}
+      <div style={{ background: '#0a100d', borderRadius: 8, padding: '12px 16px', marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <div style={{ fontSize: 11, color: '#9ca3af' }}>{domNom}</div>
+          <div style={{ fontSize: 32, fontWeight: 'bold', color: domTotal > extTotal ? '#f5c518' : '#fff' }}>{domTotal}</div>
+        </div>
+        <div style={{ fontSize: 14, color: '#6b7280' }}>POINTS</div>
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <div style={{ fontSize: 11, color: '#9ca3af' }}>{extNom}</div>
+          <div style={{ fontSize: 32, fontWeight: 'bold', color: extTotal > domTotal ? '#f5c518' : '#fff' }}>{extTotal}</div>
+        </div>
+      </div>
+      {!actif && (
+        <div style={{ background: '#1a3a5c', border: '1px solid #2563eb', borderRadius: 8, padding: '10px 12px', marginTop: 8, fontSize: 12, color: '#93c5fd' }}>
+          ⏰ Match pas encore disponible pour encodage
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function EncoderPage() {
   const [user, setUser] = useState<any>(null)
   const [loginForm, setLoginForm] = useState({ email: '', password: '' })
@@ -49,9 +137,10 @@ export default function EncoderPage() {
   const [historique, setHistorique] = useState<any[]>([])
   const [selected, setSelected] = useState<any>(null)
   const [tab, setTab] = useState<'matchs' | 'historique'>('matchs')
-  const [scores, setScores] = useState({
+  const [scores, setScores] = useState<any>({
     dom: '', ext: '', statut: 'en_direct', minute: '', periode: '1',
-    cj_dom: 0, cr_dom: 0, cj_ext: 0, cr_ext: 0
+    cj_dom: 0, cr_dom: 0, cj_ext: 0, cr_ext: 0,
+    billard_detail: [{},{},{},{},{}]
   })
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
@@ -155,7 +244,7 @@ export default function EncoderPage() {
     } else {
       setMsg({ type: 'success', text: estFinal ? 'Score final soumis ! En attente de validation.' : 'Score en direct mis a jour !' })
       setRunning(false); setSelected(null)
-      setScores({ dom: '', ext: '', statut: 'en_direct', minute: '', periode: '1', cj_dom: 0, cr_dom: 0, cj_ext: 0, cr_ext: 0 })
+      setScores({ dom: '', ext: '', statut: 'en_direct', minute: '', periode: '1', cj_dom: 0, cr_dom: 0, cj_ext: 0, cr_ext: 0, billard_detail: [{},{},{},{},{}] })
       loadMatchs(user.id)
       loadHistorique(user.id)
     }
@@ -169,6 +258,7 @@ export default function EncoderPage() {
     setHistorique([])
   }
 
+  const isBillard = selected?.sport === 'billard'
   const maxMinute = scores.periode === 'prolongation' ? 120 : scores.periode === '2' ? 90 : 45
   const progressPct = Math.min(((parseInt(scores.minute) || 0) / maxMinute) * 100, 100)
   // Verifier si le match peut etre lance
@@ -287,96 +377,128 @@ export default function EncoderPage() {
         </>
       ) : (
         <div>
+          {/* Header match */}
           <div style={{ background: '#1a4a2e', borderRadius: 8, padding: 16, marginBottom: 12 }}>
-            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 8 }}>{selected.sport?.toUpperCase()} · Journee {selected.journee}</div>
+            <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 8 }}>
+              {selected.sport?.toUpperCase()} · Journee {selected.journee}
+              {isBillard && <span style={{ marginLeft: 8, background: '#3a2a00', color: '#f5c518', padding: '2px 6px', borderRadius: 4 }}>🎱 BILLARD 9-BALL</span>}
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 6 }}>{selected.dom_nom}</div>
-                <input type="number" min="0" max="20" value={scores.dom}
-                  onChange={e => setScores({ ...scores, dom: e.target.value })} placeholder="0"
-                  style={{ width: '100%', background: '#0a100d', border: '2px solid #f5c518', borderRadius: 8, color: '#f5c518', fontSize: 32, fontWeight: 'bold', textAlign: 'center', padding: '8px 0' }} />
+                <div style={{ fontSize: 28, fontWeight: 'bold', color: '#f5c518', fontFamily: 'monospace' }}>
+                  {isBillard ? (scores.billard_detail ? [0,1,2,3,4].filter(i => scores.billard_detail[i]?.dom).length : parseInt(scores.dom)||0) : (scores.dom||'-')}
+                </div>
               </div>
               <div style={{ fontSize: 20, color: '#9ca3af', fontWeight: 'bold' }}>-</div>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 6 }}>{selected.ext_nom}</div>
+                <div style={{ fontSize: 28, fontWeight: 'bold', color: '#f5c518', fontFamily: 'monospace' }}>
+                  {isBillard ? (scores.billard_detail ? [0,1,2,3,4].filter(i => scores.billard_detail[i]?.ext).length : parseInt(scores.ext)||0) : (scores.ext||'-')}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {isBillard ? (
+            /* === INTERFACE BILLARD === */
+            <BillardEncoder
+              domNom={selected.dom_sigle || selected.dom_nom}
+              extNom={selected.ext_sigle || selected.ext_nom}
+              detail={scores.billard_detail || [{},{},{},{},{}]}
+              onChange={(detail: any[]) => {
+                const domPts = detail.filter(d => d.dom).length
+                const extPts = detail.filter(d => d.ext).length
+                setScores(p => ({ ...p, billard_detail: detail, dom: String(domPts), ext: String(extPts) }))
+              }}
+              actif={matchDispo}
+            />
+          ) : (
+            /* === INTERFACE FOOTBALL/AUTRES === */
+            <>
+              {/* Score manuel */}
+              <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                <input type="number" min="0" max="20" value={scores.dom}
+                  onChange={e => setScores({ ...scores, dom: e.target.value })} placeholder="0"
+                  style={{ flex: 1, background: '#0a100d', border: '2px solid #f5c518', borderRadius: 8, color: '#f5c518', fontSize: 32, fontWeight: 'bold', textAlign: 'center', padding: '8px 0' }} />
                 <input type="number" min="0" max="20" value={scores.ext}
                   onChange={e => setScores({ ...scores, ext: e.target.value })} placeholder="0"
-                  style={{ width: '100%', background: '#0a100d', border: '2px solid #f5c518', borderRadius: 8, color: '#f5c518', fontSize: 32, fontWeight: 'bold', textAlign: 'center', padding: '8px 0' }} />
+                  style={{ flex: 1, background: '#0a100d', border: '2px solid #f5c518', borderRadius: 8, color: '#f5c518', fontSize: 32, fontWeight: 'bold', textAlign: 'center', padding: '8px 0' }} />
               </div>
-            </div>
-          </div>
 
-          {/* Cartons */}
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Cartons (cliquer pour ajouter)</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <CartonCounter label={selected.dom_sigle}
-                jaunes={scores.cj_dom} rouges={scores.cr_dom}
-                actif={running || parseInt(scores.minute || '0') > 0}
-                onJaune={() => setScores(p => ({ ...p, cj_dom: p.cj_dom + 1 }))}
-                onRouge={() => setScores(p => ({ ...p, cr_dom: p.cr_dom + 1 }))}
-                onRetireJaune={() => setScores(p => ({ ...p, cj_dom: Math.max(0, p.cj_dom - 1) }))}
-                onRetireRouge={() => setScores(p => ({ ...p, cr_dom: Math.max(0, p.cr_dom - 1) }))} />
-              <CartonCounter label={selected.ext_sigle}
-                jaunes={scores.cj_ext} rouges={scores.cr_ext}
-                actif={running || parseInt(scores.minute || '0') > 0}
-                onJaune={() => setScores(p => ({ ...p, cj_ext: p.cj_ext + 1 }))}
-                onRouge={() => setScores(p => ({ ...p, cr_ext: p.cr_ext + 1 }))}
-                onRetireJaune={() => setScores(p => ({ ...p, cj_ext: Math.max(0, p.cj_ext - 1) }))}
-                onRetireRouge={() => setScores(p => ({ ...p, cr_ext: Math.max(0, p.cr_ext - 1) }))} />
-            </div>
-          </div>
+              {/* Cartons */}
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Cartons</div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <CartonCounter label={selected.dom_sigle}
+                    jaunes={scores.cj_dom} rouges={scores.cr_dom}
+                    actif={running || parseInt(scores.minute || '0') > 0}
+                    onJaune={() => setScores(p => ({ ...p, cj_dom: p.cj_dom + 1 }))}
+                    onRouge={() => setScores(p => ({ ...p, cr_dom: p.cr_dom + 1 }))}
+                    onRetireJaune={() => setScores(p => ({ ...p, cj_dom: Math.max(0, p.cj_dom - 1) }))}
+                    onRetireRouge={() => setScores(p => ({ ...p, cr_dom: Math.max(0, p.cr_dom - 1) }))} />
+                  <CartonCounter label={selected.ext_sigle}
+                    jaunes={scores.cj_ext} rouges={scores.cr_ext}
+                    actif={running || parseInt(scores.minute || '0') > 0}
+                    onJaune={() => setScores(p => ({ ...p, cj_ext: p.cj_ext + 1 }))}
+                    onRouge={() => setScores(p => ({ ...p, cr_ext: p.cr_ext + 1 }))}
+                    onRetireJaune={() => setScores(p => ({ ...p, cj_ext: Math.max(0, p.cj_ext - 1) }))}
+                    onRetireRouge={() => setScores(p => ({ ...p, cr_ext: Math.max(0, p.cr_ext - 1) }))} />
+                </div>
+              </div>
 
-          {/* Periode */}
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Periode</div>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {[{ val: '1', label: '1ere MT' }, { val: '2', label: '2eme MT' }, { val: 'prolongation', label: 'Prol.' }].map(p => (
-                <button key={p.val} onClick={() => setScores({ ...scores, periode: p.val })}
-                  style={{ flex: 1, padding: '8px 4px', borderRadius: 8, border: '2px solid', borderColor: scores.periode === p.val ? '#f5c518' : '#2d6a4f', background: scores.periode === p.val ? '#3a2a00' : '#1a4a2e', color: scores.periode === p.val ? '#f5c518' : '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 'bold' }}>
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
+              {/* Periode */}
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Periode</div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {[{ val: '1', label: '1ere MT' }, { val: '2', label: '2eme MT' }, { val: 'prolongation', label: 'Prol.' }].map(p => (
+                    <button key={p.val} onClick={() => setScores({ ...scores, periode: p.val })}
+                      style={{ flex: 1, padding: '8px 4px', borderRadius: 8, border: '2px solid', borderColor: scores.periode === p.val ? '#f5c518' : '#2d6a4f', background: scores.periode === p.val ? '#3a2a00' : '#1a4a2e', color: scores.periode === p.val ? '#f5c518' : '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 'bold' }}>
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          {/* Chronometre */}
-          {!matchDispo && dateMatch && (
-            <div style={{ background: '#1a3a5c', border: '1px solid #2563eb', borderRadius: 8, padding: '10px 12px', marginBottom: 12, fontSize: 12, color: '#93c5fd' }}>
-              ⏰ Match disponible le {dateMatch.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
-            </div>
-          )}
-          {scores.statut !== 'termine' && (
-            <div style={{ marginBottom: 12, background: '#1a4a2e', borderRadius: 8, padding: 12 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <div style={{ fontSize: 13, color: '#9ca3af' }}>Chronometre</div>
-                <div style={{ fontSize: 28, fontWeight: 'bold', color: '#f5c518', fontFamily: 'monospace' }}>{String(scores.minute || 0).padStart(2,'0')}'</div>
-              </div>
-              <div style={{ background: '#0a100d', borderRadius: 4, height: 8, overflow: 'hidden', marginBottom: 10 }}>
-                <div style={{ background: scores.periode === '1' ? '#007a3d' : scores.periode === '2' ? '#f5c518' : '#ce1126', height: '100%', width: `${progressPct}%`, transition: 'width 1s', borderRadius: 4 }} />
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setRunning(true)} disabled={running || !matchDispo}
-                  style={{ flex: 1, padding: '10px', borderRadius: 8, background: running ? '#1a4a2e' : '#007a3d', border: running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.5 : 1 }}>
-                  ▶ Start
-                </button>
-                <button onClick={() => setRunning(false)} disabled={!running}
-                  style={{ flex: 1, padding: '10px', borderRadius: 8, background: !running ? '#1a4a2e' : '#854d0e', border: !running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: !running ? 'not-allowed' : 'pointer', opacity: !running ? 0.5 : 1 }}>
-                  ⏸ Pause
-                </button>
-                <button onClick={() => { setRunning(false); setScores(p => ({...p, minute: '0'})) }}
-                  style={{ padding: '10px 14px', borderRadius: 8, background: '#1a4a2e', border: '1px solid #2d6a4f', color: '#9ca3af', fontWeight: 'bold', fontSize: 14, cursor: 'pointer' }}>
-                  ↺
-                </button>
-              </div>
-            </div>
+              {/* Chronometre */}
+              {!matchDispo && dateMatch && (
+                <div style={{ background: '#1a3a5c', border: '1px solid #2563eb', borderRadius: 8, padding: '10px 12px', marginBottom: 12, fontSize: 12, color: '#93c5fd' }}>
+                  ⏰ Match disponible le {dateMatch.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                </div>
+              )}
+              {scores.statut !== 'termine' && (
+                <div style={{ marginBottom: 12, background: '#1a4a2e', borderRadius: 8, padding: 12 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <div style={{ fontSize: 13, color: '#9ca3af' }}>Chronometre</div>
+                    <div style={{ fontSize: 28, fontWeight: 'bold', color: '#f5c518', fontFamily: 'monospace' }}>{String(scores.minute || 0).padStart(2,'0')}'</div>
+                  </div>
+                  <div style={{ background: '#0a100d', borderRadius: 4, height: 8, overflow: 'hidden', marginBottom: 10 }}>
+                    <div style={{ background: scores.periode === '1' ? '#007a3d' : scores.periode === '2' ? '#f5c518' : '#ce1126', height: '100%', width: `${progressPct}%`, transition: 'width 1s', borderRadius: 4 }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => setRunning(true)} disabled={running || !matchDispo}
+                      style={{ flex: 1, padding: '10px', borderRadius: 8, background: running ? '#1a4a2e' : '#007a3d', border: running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.5 : 1 }}>
+                      ▶ Start
+                    </button>
+                    <button onClick={() => setRunning(false)} disabled={!running}
+                      style={{ flex: 1, padding: '10px', borderRadius: 8, background: !running ? '#1a4a2e' : '#854d0e', border: !running ? '1px solid #2d6a4f' : 'none', color: '#fff', fontWeight: 'bold', fontSize: 14, cursor: !running ? 'not-allowed' : 'pointer', opacity: !running ? 0.5 : 1 }}>
+                      ⏸ Pause
+                    </button>
+                    <button onClick={() => { setRunning(false); setScores(p => ({...p, minute: '0'})) }}
+                      style={{ padding: '10px 14px', borderRadius: 8, background: '#1a4a2e', border: '1px solid #2d6a4f', color: '#9ca3af', fontWeight: 'bold', fontSize: 14, cursor: 'pointer' }}>
+                      ↺
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Statut */}
           <div style={{ marginBottom: 12 }}>
             <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>Statut</div>
             <div style={{ display: 'flex', gap: 8 }}>
-              {[{ val: 'en_direct', label: '🔴 En direct' }, { val: 'termine', label: '✅ Termine' }].map(st => (
+              {[{ val: 'en_direct', label: '🔴 En cours' }, { val: 'termine', label: '✅ Termine' }].map(st => (
                 <button key={st.val} onClick={() => setScores({ ...scores, statut: st.val })}
                   style={{ flex: 1, padding: '10px', borderRadius: 8, border: '2px solid', borderColor: scores.statut === st.val ? '#f5c518' : '#2d6a4f', background: scores.statut === st.val ? '#3a2a00' : '#1a4a2e', color: scores.statut === st.val ? '#f5c518' : '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 'bold' }}>
                   {st.label}
@@ -393,7 +515,7 @@ export default function EncoderPage() {
 
           <button onClick={submit} disabled={sending}
             style={{ width: '100%', padding: '14px', borderRadius: 8, background: '#f5c518', color: '#000', fontWeight: 'bold', fontSize: 16, border: 'none', cursor: 'pointer', marginBottom: 8 }}>
-            {sending ? 'Envoi...' : scores.statut === 'termine' ? 'Soumettre score final' : 'Mettre a jour en direct'}
+            {sending ? 'Envoi...' : scores.statut === 'termine' ? 'Soumettre score final' : 'Mettre a jour en cours'}
           </button>
           <button onClick={() => { setRunning(false); setSelected(null); setMsg(null) }}
             style={{ width: '100%', padding: '12px', borderRadius: 8, background: 'transparent', color: '#9ca3af', border: '1px solid #2d6a4f', cursor: 'pointer', fontSize: 14 }}>
