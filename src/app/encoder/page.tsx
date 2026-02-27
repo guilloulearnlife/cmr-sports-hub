@@ -43,23 +43,28 @@ function CartonCounter({ label, jaunes, rouges, onJaune, onRouge, onRetireJaune,
 
 function BillardEncoder({ domNom, extNom, detail, onChange, actif }: any) {
   const matchTypes = [
-    { key: 'M1', label: 'Messieurs 1', format: '1er a 7', icon: '🎱' },
-    { key: 'M2', label: 'Messieurs 2', format: '1er a 7', icon: '🎱' },
-    { key: 'M3', label: 'Messieurs 3', format: '1er a 7', icon: '🎱' },
-    { key: 'DA', label: 'Dames', format: '1ere a 5', icon: '🎱' },
-    { key: 'MX', label: 'Double Mixte', format: '1er a 5', icon: '🎱' },
+    { key: 'M1', label: 'Messieurs 1', max: 7 },
+    { key: 'M2', label: 'Messieurs 2', max: 7 },
+    { key: 'M3', label: 'Messieurs 3', max: 7 },
+    { key: 'DA', label: 'Dames', max: 5 },
+    { key: 'MX', label: 'Double Mixte', max: 5 },
   ]
 
-  function toggle(idx: number, winner: 'dom' | 'ext') {
+  function setWinner(idx: number, winner: 'dom' | 'ext') {
     const newDetail = [...detail]
     if (!newDetail[idx]) newDetail[idx] = {}
-    if (newDetail[idx][winner]) {
-      // Deselectionner
-      newDetail[idx] = {}
+    if (newDetail[idx].winner === winner) {
+      newDetail[idx] = { ...newDetail[idx], winner: null }
     } else {
-      // Selectionner ce gagnant
-      newDetail[idx] = { dom: winner === 'dom', ext: winner === 'ext' }
+      newDetail[idx] = { ...newDetail[idx], winner, dom: winner === 'dom', ext: winner === 'ext' }
     }
+    onChange(newDetail)
+  }
+
+  function setScore(idx: number, field: 'score_dom' | 'score_ext', val: string) {
+    const newDetail = [...detail]
+    if (!newDetail[idx]) newDetail[idx] = {}
+    newDetail[idx] = { ...newDetail[idx], [field]: val }
     onChange(newDetail)
   }
 
@@ -69,54 +74,84 @@ function BillardEncoder({ domNom, extNom, detail, onChange, actif }: any) {
   return (
     <div style={{ marginBottom: 12 }}>
       <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 10 }}>
-        Resultats des 5 matchs — cliquer sur le gagnant
+        5 matchs individuels — selectionner le gagnant et encoder le score
       </div>
-      {matchTypes.map((mt, idx) => (
-        <div key={mt.key} style={{
-          background: detail[idx]?.dom || detail[idx]?.ext ? '#0f2a1a' : '#1a4a2e',
-          border: '1px solid #2d6a4f', borderRadius: 8, padding: '10px 12px', marginBottom: 8,
-          display: 'flex', alignItems: 'center', gap: 8
-        }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 12, fontWeight: 'bold', color: '#f5c518' }}>{mt.key} — {mt.label}</div>
-            <div style={{ fontSize: 10, color: '#6b7280' }}>{mt.format}</div>
+      {matchTypes.map((mt, idx) => {
+        const d = detail[idx] || {}
+        const played = d.dom || d.ext
+        return (
+          <div key={mt.key} style={{
+            background: played ? '#0f2a1a' : '#1a4a2e',
+            border: `1px solid ${played ? '#007a3d' : '#2d6a4f'}`,
+            borderRadius: 8, padding: '10px 12px', marginBottom: 8
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+              <span style={{ fontSize: 11, fontWeight: 'bold', color: '#f5c518', minWidth: 24 }}>{mt.key}</span>
+              <span style={{ fontSize: 11, color: '#9ca3af', flex: 1 }}>{mt.label} — 1er a {mt.max}</span>
+              {played && <span style={{ fontSize: 10, color: '#86efac' }}>✓ encode</span>}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {/* Bouton gagnant DOM */}
+              <button onClick={() => actif && setWinner(idx, 'dom')}
+                style={{
+                  flex: 1, padding: '6px 4px', borderRadius: 6, border: '2px solid',
+                  borderColor: d.dom ? '#007a3d' : '#2d6a4f',
+                  background: d.dom ? '#007a3d' : '#0a100d',
+                  color: d.dom ? '#fff' : '#9ca3af',
+                  fontWeight: 'bold', fontSize: 11, cursor: actif ? 'pointer' : 'not-allowed',
+                  textAlign: 'center'
+                }}>
+                {d.dom ? '🏆 ' : ''}{domNom}
+              </button>
+              {/* Score DOM */}
+              <input type="number" min="0" max={mt.max} value={d.score_dom || ''}
+                onChange={e => actif && setScore(idx, 'score_dom', e.target.value)}
+                placeholder="0"
+                style={{
+                  width: 36, background: '#0a100d', border: '1px solid #2d6a4f',
+                  borderRadius: 4, color: '#f5c518', fontSize: 16, fontWeight: 'bold',
+                  textAlign: 'center', padding: '4px 0'
+                }} />
+              <span style={{ color: '#6b7280', fontSize: 12 }}>-</span>
+              {/* Score EXT */}
+              <input type="number" min="0" max={mt.max} value={d.score_ext || ''}
+                onChange={e => actif && setScore(idx, 'score_ext', e.target.value)}
+                placeholder="0"
+                style={{
+                  width: 36, background: '#0a100d', border: '1px solid #2d6a4f',
+                  borderRadius: 4, color: '#f5c518', fontSize: 16, fontWeight: 'bold',
+                  textAlign: 'center', padding: '4px 0'
+                }} />
+              {/* Bouton gagnant EXT */}
+              <button onClick={() => actif && setWinner(idx, 'ext')}
+                style={{
+                  flex: 1, padding: '6px 4px', borderRadius: 6, border: '2px solid',
+                  borderColor: d.ext ? '#ce1126' : '#2d6a4f',
+                  background: d.ext ? '#ce1126' : '#0a100d',
+                  color: d.ext ? '#fff' : '#9ca3af',
+                  fontWeight: 'bold', fontSize: 11, cursor: actif ? 'pointer' : 'not-allowed',
+                  textAlign: 'center'
+                }}>
+                {d.ext ? '🏆 ' : ''}{extNom}
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => actif && toggle(idx, 'dom')}
-            style={{
-              padding: '8px 14px', borderRadius: 8, border: '2px solid',
-              borderColor: detail[idx]?.dom ? '#007a3d' : '#2d6a4f',
-              background: detail[idx]?.dom ? '#007a3d' : '#0a100d',
-              color: detail[idx]?.dom ? '#fff' : '#9ca3af',
-              fontWeight: 'bold', fontSize: 12, cursor: actif ? 'pointer' : 'not-allowed',
-              opacity: actif ? 1 : 0.5, minWidth: 70, textAlign: 'center'
-            }}>
-            {detail[idx]?.dom ? '✓ ' : ''}{domNom}
-          </button>
-          <div style={{ color: '#6b7280', fontSize: 12 }}>vs</div>
-          <button
-            onClick={() => actif && toggle(idx, 'ext')}
-            style={{
-              padding: '8px 14px', borderRadius: 8, border: '2px solid',
-              borderColor: detail[idx]?.ext ? '#ce1126' : '#2d6a4f',
-              background: detail[idx]?.ext ? '#ce1126' : '#0a100d',
-              color: detail[idx]?.ext ? '#fff' : '#9ca3af',
-              fontWeight: 'bold', fontSize: 12, cursor: actif ? 'pointer' : 'not-allowed',
-              opacity: actif ? 1 : 0.5, minWidth: 70, textAlign: 'center'
-            }}>
-            {detail[idx]?.ext ? '✓ ' : ''}{extNom}
-          </button>
-        </div>
-      ))}
-      <div style={{ background: '#0a100d', borderRadius: 8, padding: '12px 16px', marginTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        )
+      })}
+      {/* Total */}
+      <div style={{ background: '#0a100d', borderRadius: 8, padding: '12px 16px', marginTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ textAlign: 'center', flex: 1 }}>
           <div style={{ fontSize: 11, color: '#9ca3af' }}>{domNom}</div>
-          <div style={{ fontSize: 32, fontWeight: 'bold', color: domTotal > extTotal ? '#f5c518' : '#fff' }}>{domTotal}</div>
+          <div style={{ fontSize: 36, fontWeight: 'bold', color: domTotal > extTotal ? '#f5c518' : domTotal < extTotal ? '#6b7280' : '#fff' }}>{domTotal}</div>
         </div>
-        <div style={{ fontSize: 14, color: '#6b7280' }}>POINTS</div>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 10, color: '#6b7280' }}>MATCHS</div>
+          <div style={{ fontSize: 10, color: '#6b7280' }}>GAGNES</div>
+          <div style={{ fontSize: 10, color: '#6b7280', marginTop: 4 }}>/ 5</div>
+        </div>
         <div style={{ textAlign: 'center', flex: 1 }}>
           <div style={{ fontSize: 11, color: '#9ca3af' }}>{extNom}</div>
-          <div style={{ fontSize: 32, fontWeight: 'bold', color: extTotal > domTotal ? '#f5c518' : '#fff' }}>{extTotal}</div>
+          <div style={{ fontSize: 36, fontWeight: 'bold', color: extTotal > domTotal ? '#f5c518' : extTotal < domTotal ? '#6b7280' : '#fff' }}>{extTotal}</div>
         </div>
       </div>
       {!actif && (
