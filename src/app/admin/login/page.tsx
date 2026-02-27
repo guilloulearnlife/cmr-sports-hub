@@ -29,14 +29,21 @@ export default function LoginPage() {
       .eq('id', data.user.id)
       .single()
 
-    if (!profile || !['super_admin', 'admin_regional', 'admin_federation', 'admin_competition', 'operateur_match'].includes(profile.role)) {
+    if (!profile || !['super_admin', 'admin_regional', 'admin_federation', 'admin_competition', 'operateur_match', 'correspondant'].includes(profile.role)) {
       await supabase.auth.signOut()
       setError('Accès refusé. Vous n\'avez pas les droits administrateur.')
       setLoading(false)
       return
     }
 
-    window.location.href = '/admin'
+    const role = profile?.role
+    if (role === 'correspondant') {
+      window.location.href = '/encoder'
+    } else if (role === 'admin_regional') {
+      window.location.href = '/admin/regional'
+    } else {
+      window.location.href = '/admin'
+    }
   }
 
   return (
