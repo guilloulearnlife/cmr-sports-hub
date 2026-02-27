@@ -409,7 +409,7 @@ export default function EncoderPage() {
               onChange={(detail: any[]) => {
                 const domPts = detail.filter(d => d.dom).length
                 const extPts = detail.filter(d => d.ext).length
-                setScores(p => ({ ...p, billard_detail: detail, dom: String(domPts), ext: String(extPts) }))
+                setScores((p: any) => ({ ...p, billard_detail: detail, dom: String(domPts), ext: String(extPts) }))
               }}
               actif={matchDispo}
             />
