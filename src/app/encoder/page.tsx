@@ -263,26 +263,49 @@ export default function EncoderPage() {
     setSending(true)
     setMsg(null)
     const estFinal = scores.statut === 'termine'
+    const isBillardMatch = selected?.sport === 'billard'
+
     const { error } = await supabase.from('matchs').update({
-      score_domicile: parseInt(scores.dom),
-      score_exterieur: parseInt(scores.ext),
+      score_domicile: parseInt(scores.dom) || 0,
+      score_exterieur: parseInt(scores.ext) || 0,
       statut: estFinal ? 'en_attente' : 'en_direct',
-      minute_actuelle: parseInt(scores.minute) || null,
-      cartons_jaunes_dom: scores.cj_dom,
-      cartons_rouges_dom: scores.cr_dom,
-      cartons_jaunes_ext: scores.cj_ext,
-      cartons_rouges_ext: scores.cr_ext,
+      minute_actuelle: isBillardMatch ? null : (parseInt(scores.minute) || null),
+      cartons_jaunes_dom: isBillardMatch ? null : scores.cj_dom,
+      cartons_rouges_dom: isBillardMatch ? null : scores.cr_dom,
+      cartons_jaunes_ext: isBillardMatch ? null : scores.cj_ext,
+      cartons_rouges_ext: isBillardMatch ? null : scores.cr_ext,
     }).eq('id', selected.id)
 
     if (error) {
       setMsg({ type: 'error', text: 'Erreur : ' + error.message })
-    } else {
-      setMsg({ type: 'success', text: estFinal ? 'Score final soumis ! En attente de validation.' : 'Score en direct mis a jour !' })
-      setRunning(false); setSelected(null)
-      setScores({ dom: '', ext: '', statut: 'en_direct', minute: '', periode: '1', cj_dom: 0, cr_dom: 0, cj_ext: 0, cr_ext: 0, billard_detail: [{},{},{},{},{}] })
-      loadMatchs(user.id)
-      loadHistorique(user.id)
+      setSending(false)
+      return
     }
+
+    // Sauvegarder details billard si applicable
+    if (isBillardMatch && scores.billard_detail) {
+      const matchTypes = ['M1', 'M2', 'M3', 'DA', 'MX']
+      const labels = ['Messieurs 1', 'Messieurs 2', 'Messieurs 3', 'Dames', 'Double Mixte']
+      const upserts = scores.billard_detail.map((d: any, i: number) => ({
+        match_id: selected.id,
+        type_match: matchTypes[i],
+        label: labels[i],
+        score_dom: parseInt(d.score_dom) || 0,
+        score_ext: parseInt(d.score_ext) || 0,
+        gagnant: d.dom ? 'dom' : d.ext ? 'ext' : null,
+      })).filter((d: any) => d.gagnant !== null)
+
+      if (upserts.length > 0) {
+        await supabase.from('details_matchs_billard').upsert(upserts, { onConflict: 'match_id,type_match' })
+      }
+    }
+
+    setMsg({ type: 'success', text: estFinal ? 'Score final soumis ! En attente de validation.' : 'Score en direct mis a jour !' })
+    setRunning(false)
+    setSelected(null)
+    setScores({ dom: '', ext: '', statut: 'en_direct', minute: '', periode: '1', cj_dom: 0, cr_dom: 0, cj_ext: 0, cr_ext: 0, billard_detail: [{},{},{},{},{}] })
+    loadMatchs(user.id)
+    loadHistorique(user.id)
     setSending(false)
   }
 
