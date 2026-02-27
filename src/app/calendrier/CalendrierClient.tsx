@@ -9,6 +9,9 @@ const SPORTS = [
   { val: 'basketball', label: '🏀 Basketball' },
   { val: 'volleyball', label: '🏐 Volleyball' },
   { val: 'handball', label: '🤾 Handball' },
+  { val: 'billard', label: '🎱 Billard' },
+  { val: 'boxe', label: '🥊 Boxe' },
+  { val: 'athletisme', label: '🏃 Athlétisme' },
 ]
 
 const STATUTS = [
