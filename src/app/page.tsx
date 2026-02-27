@@ -190,10 +190,10 @@ export default async function HomePage() {
           <div className="card p-16 text-center">
             <div className="text-5xl mb-4">🏆</div>
             <h2 className="font-oswald text-2xl tracking-widest text-cmr-yellow mb-3">
-              Plateforme prête !
+              SAISON 2025-2026
             </h2>
             <p className="text-green-muted max-w-md mx-auto">
-              La base de données est configurée. Commence par ajouter des clubs, planifier des matchs et encoder des scores depuis le panneau admin.
+              Les compétitions démarrent bientôt. Retrouvez ici tous les scores, classements et calendriers en temps réel.
             </p>
 
           </div>
