@@ -36,9 +36,6 @@ export default function MatchsPage() {
         .select('role, id').eq('id', sessionData.session?.user.id ?? '').single()
       
       let q = supabase.from('profiles').select('*').eq('role', 'correspondant').order('email')
-      if (currentProfile?.role === 'admin_regional') {
-        q = (q as any).eq('created_by', currentProfile.id)
-      }
       const { data: co } = await q
       setCorrespondants(co ?? [])
     }
