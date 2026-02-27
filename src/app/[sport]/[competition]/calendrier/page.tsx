@@ -139,7 +139,7 @@ export default async function CalendrierPage({ params }: Props) {
           <div className="card p-12 text-center">
             <div className="text-4xl mb-4">📅</div>
             <p className="text-green-muted font-oswald tracking-wider">Aucun match planifié pour l'instant</p>
-            <Link href="/admin" className="btn-primary inline-flex mt-4">Ajouter des matchs →</Link>
+
           </div>
         )}
       </div>

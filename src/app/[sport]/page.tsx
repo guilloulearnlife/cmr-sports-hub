@@ -102,7 +102,7 @@ export default async function SportPage({ params }: Props) {
               <div className="card p-12 text-center">
                 <div className="text-4xl mb-4">{cfg.emoji}</div>
                 <p className="text-green-muted font-oswald tracking-wider">Aucun match enregistré pour l'instant</p>
-                <Link href="/admin" className="btn-primary inline-flex mt-4">Ajouter des matchs</Link>
+
               </div>
             )}
           </div>
