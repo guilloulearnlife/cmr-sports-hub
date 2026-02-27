@@ -25,7 +25,14 @@ export default function MatchsPage() {
     Promise.all([
       supabase.from('competitions').select('*').eq('statut', 'en_cours').order('sport'),
       supabase.from('clubs').select('*').eq('actif', true).order('nom'),
-      supabase.from('profiles').select('*').eq('role', 'correspondant').order('email'),
+supabase.auth.getSession().then(async ({ data: sessionData }) => {
+        const { data: currentProfile } = await supabase.from('profiles').select('role, id').eq('id', sessionData.session?.user.id ?? '').single()
+        let q = supabase.from('profiles').select('*').eq('role', 'correspondant').order('email')
+        if (currentProfile?.role === 'admin_regional') {
+          q = q.eq('created_by', currentProfile.id)
+        }
+        return q
+      }).then(p => p),
     ]).then(([c, cl, co]) => {
       setCompetitions(c.data ?? [])
       setClubs(cl.data ?? [])

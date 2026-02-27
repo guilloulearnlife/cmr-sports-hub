@@ -9,6 +9,15 @@ export async function POST(request: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
+  // Recuperer l'utilisateur connecte (createur)
+  const authHeader = request.headers.get('Authorization')
+  let created_by = null
+  if (authHeader) {
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user } } = await supabase.auth.getUser(token)
+    created_by = user?.id ?? null
+  }
+
   const { data, error } = await supabase.auth.admin.createUser({
     email,
     password,
@@ -22,6 +31,7 @@ export async function POST(request: Request) {
     email,
     role,
     region_id: region_id || null,
+    created_by,
   })
 
   return NextResponse.json({ success: true })
