@@ -136,7 +136,7 @@ export default async function HomePage() {
           <SectionHeader
             icon={<Trophy size={18} className="text-cmr-yellow"/>}
             title="Compétitions Nationales 2025-2026"
-            href="/competitions"
+            href="/football"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {Object.entries(compsBySport).map(([sport, comps]) => {
