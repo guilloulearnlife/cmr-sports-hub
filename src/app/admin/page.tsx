@@ -8,12 +8,23 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) {
         window.location.href = '/admin/login'
-      } else {
-        setAuthed(true)
+        return
       }
+      // Verifier le role
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.session.user.id)
+        .single()
+      
+      if (profile?.role === 'correspondant') {
+        window.location.href = '/encoder'
+        return
+      }
+      setAuthed(true)
     })
   }, [])
 
