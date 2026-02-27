@@ -71,7 +71,7 @@ export default function AboutPage() {
             <h2 className="font-oswald text-xl tracking-widest text-cmr-yellow mb-4">CONTACT</h2>
             <p className="text-green-muted">
               Pour toute demande de partenariat ou d'intégration de votre fédération sportive sur la plateforme, 
-              contactez-nous à <span className="text-cmr-yellow">contact@cmrsportshub.cm</span>
+              contactez-nous à <span className="text-cmr-yellow">contact@tgm-automation.com</span>
             </p>
           </div>
         </div>
