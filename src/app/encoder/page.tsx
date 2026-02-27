@@ -161,7 +161,7 @@ export default function EncoderPage() {
   useEffect(() => {
     if (!running) return
     const interval = setInterval(() => {
-      setScores(p => ({ ...p, minute: String(Math.min(parseInt(p.minute || '0') + 1, 120)) }))
+      setScores((p: any) => ({ ...p, minute: String(Math.min(parseInt(p.minute || '0') + 1, 120)) }))
     }, 60000)
     return () => clearInterval(interval)
   }, [running])
