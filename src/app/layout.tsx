@@ -58,3 +58,11 @@ export const metadata: Metadata = {
     description: 'Le sport camerounais à portée de main.',
   },
 }
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="fr" className={`${oswald.variable} ${barlow.variable} ${barlowCondensed.variable}`}>
+      <body>{children}</body>
+    </html>
+  )
+}
