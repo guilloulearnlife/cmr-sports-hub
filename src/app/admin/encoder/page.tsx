@@ -55,7 +55,7 @@ export default function EncoderScorePage() {
       <div className="max-w-screen-lg mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">ENCODER SCORES</h1>
-          <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
+          <Link href={dashboardHref} className="btn-outline text-sm">Dashboard</Link>
         </div>
 
         {message && (

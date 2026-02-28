@@ -108,7 +108,7 @@ export default function AdminJoueursPage() {
           <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">JOUEURS</h1>
           <div className="flex gap-3">
             {editId && <button onClick={resetForm} className="btn-outline text-sm flex items-center gap-2"><X size={14}/> Annuler</button>}
-            <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
+            <Link href={dashboardHref} className="btn-outline text-sm">Dashboard</Link>
           </div>
         </div>
 
