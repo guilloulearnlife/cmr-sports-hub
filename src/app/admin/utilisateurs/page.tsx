@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 
 const REGIONS = [
   { id: '0a13c16a-ee0a-482f-9f29-68e7f6912ef9', nom: 'Centre' },
@@ -17,7 +17,6 @@ const REGIONS = [
 ]
 
 export default function UtilisateursPage() {
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL as string, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string)
   const [users, setUsers] = useState<any[]>([])
   const [currentUserRole, setCurrentUserRole] = useState<string>('')
   const [loading, setLoading] = useState(true)

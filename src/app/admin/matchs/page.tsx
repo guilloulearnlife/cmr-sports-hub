@@ -12,6 +12,7 @@ export default function MatchsPage() {
   const [correspondants, setCorrespondants] = useState<any[]>([])
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: 'ok'|'err'; text: string }|null>(null)
+  const [dashboardHref, setDashboardHref] = useState('/admin')
   const [form, setForm] = useState({
     competition_id: '', club_domicile_id: '', club_exterieur_id: '',
     journee: '', date_match: '', statut: 'planifie', correspondant_id: '',
@@ -38,6 +39,7 @@ export default function MatchsPage() {
       let q = supabase.from('profiles').select('*').eq('role', 'correspondant').order('email')
       const { data: co } = await q
       setCorrespondants(co ?? [])
+      if (currentProfile?.role === 'admin_regional') setDashboardHref('/admin/regional')
     }
     load()
   }, [])
@@ -68,7 +70,7 @@ export default function MatchsPage() {
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">PLANIFIER MATCH</h1>
-          <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
+          <Link href={dashboardHref} className="btn-outline text-sm">Dashboard</Link>
         </div>
         {message && (
           <div className={`flex items-center gap-3 p-4 rounded-lg mb-6 ${message.type === 'ok' ? 'bg-green-900/30 border border-green-600 text-green-300' : 'bg-red-900/30 border border-red-600 text-red-300'}`}>
