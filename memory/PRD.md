@@ -3,31 +3,35 @@
 ## Projet
 **Nom**: CMR Sports Hub  
 **URL Production**: https://cmr-sports-hub.vercel.app  
-**Repository**: https://github.com/guilloulearnlife/cmr-sports-hub
+**Repository**: https://github.com/guilloulearnlife/cmr-sports-hub  
+**Hébergement**: Vercel
 
 ## Stack Technique
 - **Frontend**: Next.js 14 (App Router)
 - **Backend**: Supabase (PostgreSQL + Auth + Realtime)
-- **Styling**: Tailwind CSS
-- **Hébergement**: Vercel
+- **Styling**: Tailwind CSS + CSS Custom
 - **PWA**: next-pwa
+- **Fonts**: Oswald, Barlow, Barlow Condensed
 
 ## User Personas
 1. **Fan de sport camerounais** - Consulte scores, classements, calendriers
 2. **Correspondant terrain** - Encode les scores en temps réel depuis mobile
-3. **Admin régional** - Valide les scores, gère les compétitions
-4. **Super Admin** - Gestion complète de la plateforme
+3. **Admin régional** - Valide les scores, gère les compétitions de sa région
+4. **Admin fédération** - Gère sa fédération (FECAFOOT, FECABASKET...)
+5. **Super Admin** - Gestion complète de la plateforme
 
 ## Core Requirements (Static)
-- Affichage scores en direct avec rafraîchissement automatique
-- Classements par compétition
+- Affichage scores en direct avec rafraîchissement automatique (15s)
+- Classements par compétition avec zones colorées
 - Calendrier des matchs
 - Multi-sports (football, basketball, volleyball, handball, billard, boxe, athlétisme)
-- Interface admin sécurisée
+- Interface admin sécurisée avec rôles
 - PWA pour accès mobile offline
+- Design premium aux couleurs du Cameroun
 
 ## Implémenté (Mars 2026)
-### Optimisations Production
+
+### Phase 1 - Optimisations Production
 - [x] Sécurisation README (clés API supprimées)
 - [x] `.env.example` créé pour documentation
 - [x] `.gitignore` amélioré
@@ -36,33 +40,96 @@
 - [x] `sitemap.ts` dynamique
 - [x] Métadonnées SEO enrichies (Open Graph, Twitter Cards)
 - [x] Headers de sécurité (X-Frame-Options, etc.)
-- [x] Page `error.tsx` (gestion d'erreurs gracieuse)
-- [x] Page `loading.tsx` (skeleton)
-- [x] Composant `Footer.tsx` réutilisable
-- [x] Pages légales (`mentions-legales`, `confidentialite`)
 - [x] Gestion d'erreurs robuste dans les requêtes Supabase
-- [x] Fix bugs TypeScript (dashboardHref)
-- [x] Suppression fichiers orphelins racine
-- [x] Configuration images optimisée
+
+### Phase 2 - Refonte Design Complète
+- [x] **Hero Section Immersive** - Gradient animé, orbes flottants, texte gradient
+- [x] **Animations Premium** - fade-up, slide, scale, pulse, glow, float, shimmer
+- [x] **Glassmorphism** - Effets glass sur navbar, cards, modals
+- [x] **Nouvelle palette** - Couleurs plus profondes, accents dynamiques
+- [x] **Cards avec glow effects** - Hover states, borders animés
+- [x] **Badge LIVE pulsant** - Animation dramatique pour matchs en direct
+- [x] **Score pulse animation** - Animation spectaculaire pour scores live
+- [x] **Bottom Navigation Mobile** - Nav sticky avec badge live
+- [x] **États vides engageants** - Animations Lottie-style, CTAs clairs
+- [x] **Menu déroulant Sports** - Navigation enrichie avec tous les sports
+- [x] **Footer premium** - 5 colonnes, réseaux sociaux, glassmorphism
+
+### Phase 3 - Documentation Admin
+- [x] Page `/admin-doc` avec documentation complète des rôles
+- [x] Matrice des permissions par rôle
+- [x] Workflow d'encodage des scores
+- [x] Liste des fédérations et régions
+
+### Pages Créées/Améliorées
+- [x] `/` - Homepage avec hero immersif
+- [x] `/live` - Page live avec empty state animé
+- [x] `/admin-doc` - Documentation des rôles admin
+- [x] `/mentions-legales` - Page légale
+- [x] `/confidentialite` - Politique de confidentialité
+- [x] `/not-found` - Page 404 stylisée
+- [x] `/loading` - Loading state global
+- [x] `/error` - Error boundary
+
+### Composants Améliorés
+- [x] `Navbar.tsx` - Menu dropdown, glass effect, scroll behavior
+- [x] `Footer.tsx` - 5 colonnes, social links, fédérations
+- [x] `MatchCard.tsx` - Glow effects, score pulse, progress bar live
+- [x] `BottomNav.tsx` - Navigation mobile sticky
+- [x] `loading.tsx` - Loader animé
+- [x] `error.tsx` - Error boundary stylisé
+
+## Système de Rôles (Recommandé)
+
+| Rôle | Périmètre | Permissions Clés |
+|------|-----------|------------------|
+| super_admin | Global | Tout |
+| admin_federation | Sa fédération | Compétitions, clubs, joueurs, validation |
+| admin_competition | Sa compétition | Matchs, correspondants, validation |
+| correspondant | Matchs assignés | Encodage uniquement |
 
 ## Backlog
+
 ### P0 (Critique)
-- [ ] Obtenir nouvelles clés Supabase valides (anciennes expirées)
-- [ ] Ajouter favicon.ico et og-image.png réels
+- [ ] Renouveler clés Supabase (expirées)
+- [ ] Générer favicon.ico et og-image.png réels (convertir SVG)
 
 ### P1 (Important)  
-- [ ] Implémenter icônes PWA PNG (actuellement SVG)
+- [ ] Icônes PWA PNG (actuellement SVG)
 - [ ] Tests E2E avec Playwright
 - [ ] Monitoring erreurs (Sentry)
+- [ ] Simplifier rôles (6 → 4)
+- [ ] Filtrage par fédération dans admin
 
 ### P2 (Nice-to-have)
 - [ ] Notifications push pour scores live
 - [ ] Mode offline complet avec cache
 - [ ] Partage social (WhatsApp, Facebook)
 - [ ] Dark/Light mode toggle
-- [ ] Internationalisation (anglais)
+- [ ] Countdown prochain match
+- [ ] Activity feed temps réel
+- [ ] Stats ticker défilant
 
-## Notes Déploiement
-- Variables d'environnement sur Vercel Dashboard
-- Build automatique sur push `main`
-- Domaine: cmr-sports-hub.vercel.app
+## Notes Techniques
+
+### Variables d'environnement requises
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+### Déploiement
+- Push vers GitHub → Build automatique Vercel
+- Variables d'env sur Vercel Dashboard
+
+### Fédérations Supportées
+- FECAFOOT (Football)
+- FECABASKET (Basketball)
+- FECAVOLLEY (Volleyball)
+- FECAHAND (Handball)
+- FECABILLARD (Billard)
+- FECABOXE (Boxe)
+- FECATHLE (Athlétisme)
+
+---
+*Dernière mise à jour: Mars 2026*

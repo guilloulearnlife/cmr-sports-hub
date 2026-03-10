@@ -1,240 +1,420 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { Trophy, Zap, Calendar, ArrowRight, TrendingUp } from 'lucide-react'
+import { Trophy, Zap, Calendar, ArrowRight, TrendingUp, ChevronRight, Bell, Tv, Users, Target } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import MatchCard from '@/components/MatchCard'
-import { supabase, getMatchsLive, getMatchsDuJour, getProchainMatchs, getCompetitionsActives } from '@/lib/supabase'
+import BottomNav from '@/components/BottomNav'
+import { getMatchsLive, getMatchsDuJour, getProchainMatchs, getCompetitionsActives } from '@/lib/supabase'
 import { getSportConfig, formatDateLongue } from '@/lib/utils'
 import type { MatchView, Competition } from '@/lib/supabase'
 
-// Revalidation toutes les 30 secondes pour les scores live
 export const revalidate = 30
 
-async function getData() {
-  try {
-    const [live, duJour, prochains, competitions] = await Promise.all([
-      getMatchsLive(),
-      getMatchsDuJour(),
-      getProchainMatchs(),
-      getCompetitionsActives(),
-    ])
-    return { live, duJour, prochains, competitions, error: null }
-  } catch (error) {
-    return { live: [], duJour: [], prochains: [], competitions: [], error }
+export default async function Home() {
+  const [live, duJour, prochains, competitions] = await Promise.all([
+    getMatchsLive(),
+    getMatchsDuJour(),
+    getProchainMatchs(),
+    getCompetitionsActives(),
+  ])
+
+  const stats = {
+    competitions: competitions.length,
+    live: live.length,
+    aujourdhui: duJour.length,
+    prochains: prochains.length,
   }
-}
-
-export default async function HomePage() {
-  const { live, duJour, prochains, competitions } = await getData()
-  const today = new Date().toLocaleDateString('fr-FR', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    timeZone: 'Africa/Douala'
-  })
-
-  // Grouper les compétitions par sport
-  const compsBySport = competitions.reduce<Record<string, Competition[]>>((acc, c) => {
-    if (!acc[c.sport]) acc[c.sport] = []
-    acc[c.sport].push(c)
-    return acc
-  }, {})
 
   return (
-    <div className="min-h-screen bg-dark">
-      <Navbar/>
+    <div className="min-h-screen bg-bg-primary">
+      <Navbar />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden border-b border-border"
-               style={{ background: 'radial-gradient(ellipse at 30% 50%, #1a4a2e 0%, #0a100d 60%)' }}>
-        <div className="absolute inset-0 opacity-5"
-             style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #f5c518 1px, transparent 0)', backgroundSize: '32px 32px' }}/>
-
-        <div className="max-w-screen-2xl mx-auto px-4 py-12 relative">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
-            <div className="flex-1 animate-fade-up">
-              <div className="font-oswald text-green-muted text-sm tracking-widest uppercase mb-3">
-                🇨🇲 Plateforme Nationale du Sport Camerounais
-              </div>
-              <h1 className="font-oswald font-bold text-5xl lg:text-6xl text-cmr-yellow leading-none tracking-widest mb-4">
-                CMR SPORTS<br/>
-                <span className="text-white">HUB</span>
-              </h1>
-              <p className="text-green-muted text-lg max-w-lg">
-                Scores en direct, classements et calendriers de toutes les compétitions nationales camerounaises.
-              </p>
-              <div className="flex items-center gap-3 mt-6">
-                <Link href="/live" data-testid="btn-scores-live" className="btn-primary flex items-center gap-2">
-                  <Zap size={16}/> Scores Live
-                </Link>
-                <Link href="/calendrier" data-testid="btn-calendrier" className="btn-outline flex items-center gap-2">
-                  <Calendar size={16}/> Calendrier
-                </Link>
-              </div>
-            </div>
-
-            {/* Stats globales */}
-            <div className="grid grid-cols-2 gap-2 lg:gap-3 w-full lg:w-auto">
-              {[
-                { num: competitions.length, label: 'Compétitions actives' },
-                { num: live.length, label: 'Matchs en direct', highlight: live.length > 0 },
-                { num: duJour.length, label: "Matchs aujourd'hui" },
-                { num: prochains.length, label: 'Prochains matchs (48h)' },
-              ].map((s, i) => (
-                <div key={i} className={`card p-4 text-center min-w-[120px] ${s.highlight ? 'border-cmr-live/50' : ''}`}>
-                  <div className={`font-oswald font-bold text-3xl ${s.highlight ? 'text-cmr-live' : 'text-cmr-yellow'}`}>
-                    {s.num}
-                  </div>
-                  <div className="text-xs text-green-muted mt-1 leading-tight">{s.label}</div>
+      {/* ═══════════════════════════════════════════════════════════
+          HERO SECTION — Immersive
+          ═══════════════════════════════════════════════════════════ */}
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden hero-gradient noise">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 hero-pattern opacity-50" />
+        
+        {/* Floating orbs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-cmr-gold/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cmr-green/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '-2s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cmr-red/5 rounded-full blur-3xl animate-spin-slow" />
+        
+        <div className="relative z-10 max-w-screen-2xl mx-auto px-4 py-20 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            {/* Left content */}
+            <div className="space-y-8">
+              {/* Live indicator */}
+              {stats.live > 0 && (
+                <div className="animate-fade-up">
+                  <Link href="/live" className="badge-live inline-flex">
+                    {stats.live} match{stats.live > 1 ? 's' : ''} en direct
+                  </Link>
                 </div>
-              ))}
+              )}
+              
+              {/* Main title */}
+              <div className="animate-fade-up-delay-1">
+                <p className="text-text-secondary font-oswald tracking-[0.3em] text-sm mb-4 flex items-center gap-2">
+                  <span className="w-8 h-[2px] bg-cmr-gold" />
+                  PLATEFORME NATIONALE
+                </p>
+                <h1 className="font-oswald font-black text-6xl md:text-7xl lg:text-8xl leading-none">
+                  <span className="text-gradient">CMR</span>
+                  <br />
+                  <span className="text-white">SPORTS</span>
+                  <br />
+                  <span className="text-text-secondary text-4xl md:text-5xl lg:text-6xl">HUB</span>
+                </h1>
+              </div>
+              
+              {/* Description */}
+              <p className="text-text-secondary text-lg md:text-xl max-w-lg animate-fade-up-delay-2 text-balance">
+                Le cœur du sport camerounais bat ici. Scores en direct, classements et calendriers de toutes les compétitions nationales.
+              </p>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap gap-4 animate-fade-up-delay-3">
+                <Link href="/live" data-testid="btn-scores-live" className="btn-primary flex items-center gap-3 group">
+                  <Zap size={20} className="group-hover:animate-pulse" />
+                  Scores Live
+                  <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link href="/calendrier" data-testid="btn-calendrier" className="btn-outline flex items-center gap-3">
+                  <Calendar size={18} />
+                  Calendrier
+                </Link>
+              </div>
+              
+              {/* Quick sports links */}
+              <div className="flex flex-wrap gap-2 animate-fade-up-delay-4">
+                {['football', 'basketball', 'volleyball', 'handball'].map(sport => {
+                  const cfg = getSportConfig(sport as any)
+                  return (
+                    <Link key={sport} href={`/${sport}`} className="badge-sport">
+                      <span>{cfg.emoji}</span>
+                      <span>{cfg.label}</span>
+                    </Link>
+                  )
+                })}
+                <Link href="/sports" className="badge-sport hover:bg-cmr-gold/10">
+                  <span>+4</span>
+                  <span>autres</span>
+                </Link>
+              </div>
             </div>
+            
+            {/* Right content — Stats cards */}
+            <div className="hidden lg:block">
+              <div className="grid grid-cols-2 gap-4 animate-slide-right">
+                <StatsCard 
+                  icon={<Trophy className="text-cmr-gold" />}
+                  value={stats.competitions}
+                  label="Compétitions actives"
+                  delay={0}
+                />
+                <StatsCard 
+                  icon={<Tv className="text-accent-live" />}
+                  value={stats.live}
+                  label="Matchs en direct"
+                  highlight={stats.live > 0}
+                  delay={1}
+                />
+                <StatsCard 
+                  icon={<Target className="text-accent-cyan" />}
+                  value={stats.aujourdhui}
+                  label="Matchs aujourd'hui"
+                  delay={2}
+                />
+                <StatsCard 
+                  icon={<Calendar className="text-accent-orange" />}
+                  value={stats.prochains}
+                  label="Prochains matchs"
+                  delay={3}
+                />
+              </div>
+              
+              {/* Next match countdown placeholder */}
+              {prochains.length > 0 && (
+                <div className="mt-6 glass rounded-2xl p-6 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+                  <div className="flex items-center gap-2 text-xs text-text-muted font-oswald tracking-widest mb-4">
+                    <Bell size={14} />
+                    PROCHAIN MATCH
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-center">
+                      <div className="text-sm font-semibold text-white">{prochains[0].dom_nom}</div>
+                      <div className="text-xs text-text-muted">{prochains[0].dom_sigle}</div>
+                    </div>
+                    <div className="px-4">
+                      <div className="text-2xl font-oswald text-cmr-gold">VS</div>
+                      <div className="text-xs text-text-muted text-center">
+                        {prochains[0].date_match && formatDateLongue(prochains[0].date_match)}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-semibold text-white">{prochains[0].ext_nom}</div>
+                      <div className="text-xs text-text-muted">{prochains[0].ext_sigle}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-text-muted rounded-full flex items-start justify-center p-2">
+            <div className="w-1 h-2 bg-cmr-gold rounded-full animate-fade-up" style={{ animationDuration: '1.5s', animationIterationCount: 'infinite' }} />
           </div>
         </div>
       </section>
 
-      <div className="max-w-screen-2xl mx-auto px-4 py-8 space-y-10">
-
-        {/* MATCHS EN DIRECT */}
-        {live.length > 0 && (
-          <section>
-            <SectionHeader
-              icon={<Zap size={18} className="text-cmr-live"/>}
-              title="En Direct"
-              badge={`${live.length} match${live.length > 1 ? 's' : ''}`}
-              badgeColor="bg-cmr-live"
-              href="/live"
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {live.map(m => <MatchCard key={m.id} match={m}/>)}
-            </div>
-          </section>
-        )}
-
-        {/* MATCHS DU JOUR */}
-        {duJour.length > 0 && (
-          <section>
-            <SectionHeader
-              icon={<Calendar size={18} className="text-cmr-yellow"/>}
-              title={`Aujourd'hui`}
-              subtitle={today}
-              href="/calendrier"
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {duJour.slice(0, 6).map(m => <MatchCard key={m.id} match={m}/>)}
-            </div>
-            {duJour.length > 6 && (
-              <div className="text-center mt-4">
-                <Link href="/calendrier" className="btn-outline text-sm">
-                  Voir tous les matchs du jour ({duJour.length})
-                </Link>
+      {/* ═══════════════════════════════════════════════════════════
+          LIVE MATCHES SECTION
+          ═══════════════════════════════════════════════════════════ */}
+      {live.length > 0 && (
+        <section className="py-16 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-accent-live/5 to-transparent pointer-events-none" />
+          <div className="max-w-screen-2xl mx-auto px-4 relative">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <span className="badge-live text-base px-6 py-2">EN DIRECT</span>
+                <h2 className="font-oswald text-2xl tracking-widest text-white">
+                  {live.length} Match{live.length > 1 ? 's' : ''} en cours
+                </h2>
               </div>
-            )}
-          </section>
-        )}
+              <Link href="/live" className="btn-glass flex items-center gap-2">
+                Voir tout <ArrowRight size={16} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {live.slice(0, 3).map((match, i) => (
+                <div key={match.id} className="animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <MatchCard match={match} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-        {/* COMPÉTITIONS PAR SPORT */}
-        <section>
-          <SectionHeader
-            icon={<Trophy size={18} className="text-cmr-yellow"/>}
-            title="Compétitions Nationales 2025-2026"
-            href="/competitions"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-            {Object.entries(compsBySport).map(([sport, comps]) => {
+      {/* ═══════════════════════════════════════════════════════════
+          COMPETITIONS SECTION
+          ═══════════════════════════════════════════════════════════ */}
+      <section className="py-16 bg-bg-elevated/50">
+        <div className="max-w-screen-2xl mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <p className="text-text-muted font-oswald tracking-widest text-sm mb-2">SAISON 2025-2026</p>
+              <h2 className="font-oswald text-3xl tracking-widest text-white flex items-center gap-3">
+                <Trophy className="text-cmr-gold" size={28} />
+                Compétitions Nationales
+              </h2>
+            </div>
+            <Link href="/competitions" className="btn-glass hidden md:flex items-center gap-2">
+              Tout voir <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          {competitions.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {competitions.slice(0, 8).map((comp, i) => (
+                <CompetitionCard key={comp.id} competition={comp} delay={i} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState 
+              icon="🏆"
+              title="Saison 2025-2026"
+              description="Les compétitions démarrent bientôt. Retrouvez ici tous les scores, classements et calendriers en temps réel."
+            />
+          )}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════════
+          UPCOMING MATCHES
+          ═══════════════════════════════════════════════════════════ */}
+      {prochains.length > 0 && (
+        <section className="py-16">
+          <div className="max-w-screen-2xl mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="font-oswald text-2xl tracking-widest text-white flex items-center gap-3">
+                <Calendar className="text-accent-cyan" size={24} />
+                Prochains Matchs
+              </h2>
+              <Link href="/calendrier" className="btn-glass flex items-center gap-2">
+                Calendrier complet <ArrowRight size={16} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {prochains.slice(0, 6).map((match, i) => (
+                <div key={match.id} className="animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
+                  <MatchCard match={match} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════
+          SPORTS GRID
+          ═══════════════════════════════════════════════════════════ */}
+      <section className="py-16 bg-bg-elevated/30">
+        <div className="max-w-screen-2xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-oswald text-3xl tracking-widest text-white mb-4">
+              Explorez par Sport
+            </h2>
+            <p className="text-text-secondary max-w-2xl mx-auto">
+              7 fédérations sportives, des centaines de clubs, une seule plateforme.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            {['football', 'basketball', 'volleyball', 'handball', 'billard', 'boxe', 'athletisme'].map((sport, i) => {
               const cfg = getSportConfig(sport as any)
               return (
-                <Link key={sport} href={`/${sport}`}
-                      className="card p-4 hover:border-green-mid transition-all group hover:-translate-y-0.5">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
-                         style={{ background: cfg.couleur + '33' }}>
-                      {cfg.emoji}
-                    </div>
-                    <div>
-                      <div className="font-oswald font-bold tracking-wider text-sm">{cfg.label}</div>
-                      <div className="text-xs text-green-muted">{comps.length} compétition{comps.length > 1 ? 's' : ''}</div>
-                    </div>
+                <Link 
+                  key={sport} 
+                  href={`/${sport}`}
+                  className="card card-glow group p-6 text-center animate-fade-up hover:scale-105"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                >
+                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
+                    {cfg.emoji}
                   </div>
-                  <div className="space-y-1">
-                    {comps.map(c => (
-                      <div key={c.id} className="text-xs text-green-muted flex items-center gap-1">
-                        <div className="w-1 h-1 rounded-full bg-green-dim flex-shrink-0"/>
-                        {c.nom_court ?? c.nom}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-1 mt-3 text-xs text-cmr-yellow opacity-0 group-hover:opacity-100 transition-opacity font-oswald tracking-wider">
-                    Voir <ArrowRight size={12}/>
+                  <div className="font-oswald text-sm tracking-wider text-text-secondary group-hover:text-cmr-gold transition-colors">
+                    {cfg.label}
                   </div>
                 </Link>
               )
             })}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* PROCHAINS MATCHS */}
-        {prochains.length > 0 && (
-          <section>
-            <SectionHeader
-              icon={<TrendingUp size={18} className="text-cmr-yellow"/>}
-              title="Prochains Matchs (48h)"
-              href="/calendrier"
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {prochains.slice(0, 6).map(m => <MatchCard key={m.id} match={m}/>)}
-            </div>
-          </section>
-        )}
-
-        {/* Empty state si aucun match */}
-        {!live.length && !duJour.length && !prochains.length && (
-          <div className="card p-16 text-center">
-            <div className="text-5xl mb-4">🏆</div>
-            <h2 className="font-oswald text-2xl tracking-widest text-cmr-yellow mb-3">
-              SAISON 2025-2026
-            </h2>
-            <p className="text-green-muted max-w-md mx-auto">
-              Les compétitions démarrent bientôt. Retrouvez ici tous les scores, classements et calendriers en temps réel.
-            </p>
-
+      {/* ═══════════════════════════════════════════════════════════
+          CTA SECTION
+          ═══════════════════════════════════════════════════════════ */}
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-cmr-green/10 via-cmr-gold/5 to-cmr-red/10" />
+        <div className="max-w-screen-xl mx-auto px-4 text-center relative">
+          <div className="inline-flex items-center gap-2 bg-cmr-gold/10 border border-cmr-gold/20 rounded-full px-4 py-2 mb-6">
+            <Bell size={16} className="text-cmr-gold" />
+            <span className="text-sm text-cmr-gold font-oswald tracking-wider">Restez informé</span>
           </div>
-        )}
-      </div>
+          <h2 className="font-oswald text-4xl md:text-5xl tracking-widest text-white mb-6">
+            Ne manquez plus un seul match
+          </h2>
+          <p className="text-text-secondary text-lg max-w-2xl mx-auto mb-8">
+            Activez les notifications pour recevoir les scores en direct et les alertes des matchs de vos équipes favorites.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <button className="btn-primary flex items-center gap-2">
+              <Bell size={18} />
+              Activer les notifications
+            </button>
+            <Link href="/about" className="btn-outline">
+              En savoir plus
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <Footer />
+      <BottomNav liveCount={stats.live} />
     </div>
   )
 }
 
-function SectionHeader({
-  icon, title, subtitle, badge, badgeColor, href
-}: {
-  icon:        React.ReactNode
-  title:       string
-  subtitle?:   string
-  badge?:      string
-  badgeColor?: string
-  href?:       string
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+function StatsCard({ 
+  icon, 
+  value, 
+  label, 
+  highlight = false,
+  delay = 0 
+}: { 
+  icon: React.ReactNode
+  value: number
+  label: string
+  highlight?: boolean
+  delay?: number
 }) {
   return (
-    <div className="flex items-center justify-between mb-4">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          {icon}
-          <h2 className="font-oswald font-bold text-xl tracking-widest text-white">{title}</h2>
-        </div>
-        {badge && (
-          <span className={`text-xs text-white px-2 py-0.5 rounded font-oswald tracking-wider ${badgeColor ?? 'bg-green-mid'}`}>
-            {badge}
-          </span>
-        )}
-        {subtitle && <span className="text-sm text-green-muted hidden sm:block">{subtitle}</span>}
+    <div 
+      className={`
+        card p-6 group
+        ${highlight ? 'card-live animate-pulse-live' : ''}
+      `}
+      style={{ animationDelay: `${delay * 0.1}s` }}
+    >
+      <div className="flex items-center gap-3 mb-3">
+        {icon}
+        <span className={`
+          font-oswald font-black text-4xl
+          ${highlight ? 'text-accent-live animate-score-pulse' : 'text-white'}
+        `}>
+          {value}
+        </span>
       </div>
-      {href && (
-        <Link href={href} className="text-xs text-green-muted hover:text-cmr-yellow font-oswald tracking-wider flex items-center gap-1 transition-colors">
-          Tout voir <ArrowRight size={12}/>
-        </Link>
-      )}
+      <div className="text-text-muted text-sm font-oswald tracking-wider">
+        {label}
+      </div>
+    </div>
+  )
+}
+
+function CompetitionCard({ competition, delay }: { competition: Competition, delay: number }) {
+  const cfg = getSportConfig(competition.sport)
+  return (
+    <Link 
+      href={`/${competition.sport}/${competition.slug}`}
+      className="card card-glow p-5 group animate-fade-up"
+      style={{ animationDelay: `${delay * 0.1}s` }}
+    >
+      <div className="flex items-start gap-4">
+        <div className="text-3xl">{cfg.emoji}</div>
+        <div className="flex-1 min-w-0">
+          <div className="font-oswald text-white tracking-wider group-hover:text-cmr-gold transition-colors truncate">
+            {competition.nom_court || competition.nom}
+          </div>
+          <div className="text-xs text-text-muted mt-1 capitalize">
+            {competition.genre} • {competition.statut}
+          </div>
+          <div className="flex items-center gap-2 mt-3">
+            <span className="badge-gold text-xs">{cfg.label}</span>
+            {competition.statut === 'en_cours' && (
+              <span className="text-xs text-accent-cyan">En cours</span>
+            )}
+          </div>
+        </div>
+        <ChevronRight size={20} className="text-text-muted group-hover:text-cmr-gold group-hover:translate-x-1 transition-all" />
+      </div>
+    </Link>
+  )
+}
+
+function EmptyState({ icon, title, description }: { icon: string, title: string, description: string }) {
+  return (
+    <div className="card p-16 text-center animate-fade-up">
+      <div className="text-6xl mb-6 animate-float">{icon}</div>
+      <h3 className="font-oswald text-2xl tracking-widest text-cmr-gold mb-4">
+        {title}
+      </h3>
+      <p className="text-text-secondary max-w-md mx-auto">
+        {description}
+      </p>
     </div>
   )
 }
