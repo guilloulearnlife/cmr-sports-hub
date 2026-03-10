@@ -81,6 +81,16 @@
 - [x] Gestion états : supported, denied, enabled
 - [x] Intégration navbar et page d'accueil
 
+### Phase 6 - Partage Social
+- [x] Composant `ShareButton` avec modal et boutons natifs
+- [x] Support WhatsApp, Twitter, Facebook, Copie de lien
+- [x] Page `/partager` avec outils de partage complets
+- [x] Messages pré-formatés prêts à copier
+- [x] Templates de partage pour invitations, résultats, live
+- [x] Conseils par réseau social
+- [x] Intégration dans MatchCard (bouton partage)
+- [x] Fonctions helper `getMatchShareData`, `getStandingsShareData`
+
 ### Pages Créées/Améliorées
 - [x] `/` - Homepage avec hero immersif
 - [x] `/live` - Page live avec empty state animé

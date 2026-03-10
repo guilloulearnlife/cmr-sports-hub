@@ -3,6 +3,7 @@ import { Clock, MapPin, Tv, ChevronRight } from 'lucide-react'
 import type { MatchView } from '@/lib/supabase'
 import { formatHeure, formatDateCourte, getSportConfig } from '@/lib/utils'
 import FavoriteButton from '@/components/FavoriteButton'
+import ShareButton, { getMatchShareData } from '@/components/ShareButton'
 
 interface MatchCardProps {
   match: MatchView
@@ -170,7 +171,7 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
         </div>
 
         {/* Footer info */}
-        {!compact && (match.lieu_ville || match.diffusion_tv) && (
+        {!compact && (
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-border-subtle">
             <div className="flex items-center gap-4">
               {match.lieu_ville && (
@@ -186,7 +187,13 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
                 </span>
               )}
             </div>
-            <ChevronRight size={16} className="text-text-muted group-hover:text-cmr-gold group-hover:translate-x-1 transition-all" />
+            <div className="flex items-center gap-2">
+              <ShareButton 
+                data={getMatchShareData(match)} 
+                size="sm"
+              />
+              <ChevronRight size={16} className="text-text-muted group-hover:text-cmr-gold group-hover:translate-x-1 transition-all" />
+            </div>
           </div>
         )}
       </div>

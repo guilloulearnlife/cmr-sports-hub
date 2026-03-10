@@ -13,6 +13,7 @@ const QUICK_LINKS = [
   { href: '/football', label: 'Football' },
   { href: '/basketball', label: 'Basketball' },
   { href: '/calendrier', label: 'Calendrier' },
+  { href: '/partager', label: 'Partager' },
 ]
 
 const LEGAL_LINKS = [
