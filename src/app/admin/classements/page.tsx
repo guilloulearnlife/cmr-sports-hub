@@ -25,7 +25,7 @@ export default async function ClassementsAdminPage() {
             <BarChart2 size={24} className="text-cmr-yellow"/>
             <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">CLASSEMENTS</h1>
           </div>
-          <Link href={dashboardHref} className="btn-outline text-sm">Dashboard</Link>
+          <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
         </div>
 
         <div className="space-y-3">

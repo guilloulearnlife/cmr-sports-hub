@@ -1,6 +1,40 @@
+# Fichiers de build
 node_modules/
 .next/
 out/
 build/
+dist/
+
+# Variables d'environnement
+.env
+.env.local
 .env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
 .DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# PWA
+public/sw.js
+public/workbox-*.js
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts

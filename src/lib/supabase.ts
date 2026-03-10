@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl  = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey  = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl  = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseKey  = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
@@ -111,78 +111,134 @@ export interface ClassementView {
 
 // ── Helpers requêtes ───────────────────────────────────────
 
-export async function getMatchsLive() {
-  const { data, error } = await supabase
-    .from('v_matchs_live')
-    .select('*')
-    .order('date_match')
-  if (error) throw error
-  return data as MatchView[]
+export async function getMatchsLive(): Promise<MatchView[]> {
+  try {
+    const { data, error } = await supabase
+      .from('v_matchs_live')
+      .select('*')
+      .order('date_match')
+    if (error) {
+      console.error('getMatchsLive error:', error.message)
+      return []
+    }
+    return data as MatchView[]
+  } catch (e) {
+    console.error('getMatchsLive exception:', e)
+    return []
+  }
 }
 
-export async function getMatchsDuJour() {
-  const { data, error } = await supabase
-    .from('v_matchs_du_jour')
-    .select('*')
-    .order('date_match')
-  if (error) throw error
-  return data as MatchView[]
+export async function getMatchsDuJour(): Promise<MatchView[]> {
+  try {
+    const { data, error } = await supabase
+      .from('v_matchs_du_jour')
+      .select('*')
+      .order('date_match')
+    if (error) {
+      console.error('getMatchsDuJour error:', error.message)
+      return []
+    }
+    return data as MatchView[]
+  } catch (e) {
+    console.error('getMatchsDuJour exception:', e)
+    return []
+  }
 }
 
-export async function getProchainMatchs() {
-  const { data, error } = await supabase
-    .from('v_prochains_matchs')
-    .select('*')
-    .order('date_match')
-    .limit(20)
-  if (error) throw error
-  return data as MatchView[]
+export async function getProchainMatchs(): Promise<MatchView[]> {
+  try {
+    const { data, error } = await supabase
+      .from('v_prochains_matchs')
+      .select('*')
+      .order('date_match')
+      .limit(20)
+    if (error) {
+      console.error('getProchainMatchs error:', error.message)
+      return []
+    }
+    return data as MatchView[]
+  } catch (e) {
+    console.error('getProchainMatchs exception:', e)
+    return []
+  }
 }
 
-export async function getClassement(competitionSlug: string, journee?: number) {
-  let query = supabase
-    .from('v_classements')
-    .select('*, competitions!inner(slug)')
-    .eq('competitions.slug', competitionSlug)
-    .order('position')
+export async function getClassement(competitionSlug: string, journee?: number): Promise<ClassementView[]> {
+  try {
+    let query = supabase
+      .from('v_classements')
+      .select('*, competitions!inner(slug)')
+      .eq('competitions.slug', competitionSlug)
+      .order('position')
 
-  if (journee) query = query.eq('journee', journee)
-  
-  const { data, error } = await query
-  if (error) throw error
-  return data as ClassementView[]
+    if (journee) query = query.eq('journee', journee)
+    
+    const { data, error } = await query
+    if (error) {
+      console.error('getClassement error:', error.message)
+      return []
+    }
+    return data as ClassementView[]
+  } catch (e) {
+    console.error('getClassement exception:', e)
+    return []
+  }
 }
 
-export async function getMatchsParCompetition(competitionSlug: string, journee?: number) {
-  let query = supabase
-    .from('v_matchs')
-    .select('*, competitions!inner(slug)')
-    .eq('competitions.slug', competitionSlug)
-    .order('date_match')
+export async function getMatchsParCompetition(competitionSlug: string, journee?: number): Promise<MatchView[]> {
+  try {
+    let query = supabase
+      .from('v_matchs')
+      .select('*, competitions!inner(slug)')
+      .eq('competitions.slug', competitionSlug)
+      .order('date_match')
 
-  if (journee) query = query.eq('journee', journee)
+    if (journee) query = query.eq('journee', journee)
 
-  const { data, error } = await query
-  if (error) throw error
-  return data as MatchView[]
+    const { data, error } = await query
+    if (error) {
+      console.error('getMatchsParCompetition error:', error.message)
+      return []
+    }
+    return data as MatchView[]
+  } catch (e) {
+    console.error('getMatchsParCompetition exception:', e)
+    return []
+  }
 }
 
-export async function getCompetitionsActives() {
-  const { data, error } = await supabase
-    .from('competitions')
-    .select('*, federations(*)')
-    .eq('statut', 'en_cours')
-    .order('sport')
-  if (error) throw error
-  return data as Competition[]
+export async function getCompetitionsActives(): Promise<Competition[]> {
+  try {
+    const { data, error } = await supabase
+      .from('competitions')
+      .select('*, federations(*)')
+      .eq('statut', 'en_cours')
+      .order('sport')
+    if (error) {
+      console.error('getCompetitionsActives error:', error.message)
+      return []
+    }
+    return data as Competition[]
+  } catch (e) {
+    console.error('getCompetitionsActives exception:', e)
+    return []
+  }
 }
 
-export async function getFederations() {
-  const { data, error } = await supabase
-    .from('federations')
-    .select('*')
-    .eq('active', true)
-    .order('sport')
-  if (error) throw error
-  return data as Federation[]
+export async function getFederations(): Promise<Federation[]> {
+  try {
+    const { data, error } = await supabase
+      .from('federations')
+      .select('*')
+      .eq('active', true)
+      .order('sport')
+    if (error) {
+      console.error('getFederations error:', error.message)
+      return []
+    }
+    return data as Federation[]
+  } catch (e) {
+    console.error('getFederations exception:', e)
+    return []
+  }
 }

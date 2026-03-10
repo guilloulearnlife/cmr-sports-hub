@@ -88,7 +88,7 @@ export default function UtilisateursPage() {
           <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">
             👥 UTILISATEURS
           </h1>
-          <Link href={dashboardHref} className="btn-outline text-sm">← Admin</Link>
+          <Link href="/admin" className="btn-outline text-sm">← Admin</Link>
         </div>
 
         {/* Créer un utilisateur */}

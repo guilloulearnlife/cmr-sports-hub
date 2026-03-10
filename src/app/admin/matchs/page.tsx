@@ -70,7 +70,7 @@ export default function MatchsPage() {
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">PLANIFIER MATCH</h1>
-          <Link href={dashboardHref} className="btn-outline text-sm">Dashboard</Link>
+          <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
         </div>
         {message && (
           <div className={`flex items-center gap-3 p-4 rounded-lg mb-6 ${message.type === 'ok' ? 'bg-green-900/30 border border-green-600 text-green-300' : 'bg-red-900/30 border border-red-600 text-red-300'}`}>

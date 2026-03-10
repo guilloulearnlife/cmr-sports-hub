@@ -1,0 +1,17 @@
+# SEO Robots.txt - CMR Sports Hub
+# https://cmr-sports-hub.vercel.app
+
+User-agent: *
+Allow: /
+
+# Bloquer les pages admin
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /encoder
+Disallow: /api/*
+
+# Sitemaps
+Sitemap: https://cmr-sports-hub.vercel.app/sitemap.xml
+
+# Crawl-delay pour être gentil avec les serveurs
+Crawl-delay: 1

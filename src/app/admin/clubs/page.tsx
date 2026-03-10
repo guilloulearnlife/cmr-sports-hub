@@ -33,7 +33,7 @@ export default function ClubsPage() {
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-oswald font-bold text-3xl tracking-widest text-cmr-yellow">CREER CLUB</h1>
-          <Link href={dashboardHref} className="btn-outline text-sm">Dashboard</Link>
+          <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
         </div>
 
         {message && (

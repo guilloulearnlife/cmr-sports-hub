@@ -65,7 +65,7 @@ export default function ValidationPage() {
               {loading ? '...' : `${matchs.length} score(s) en attente`}
             </p>
           </div>
-          <Link href={dashboardHref} className="btn-outline text-sm">Dashboard</Link>
+          <Link href="/admin" className="btn-outline text-sm">Dashboard</Link>
         </div>
 
         {msg && (

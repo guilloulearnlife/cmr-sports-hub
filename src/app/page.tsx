@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { Trophy, Zap, Calendar, ArrowRight, TrendingUp } from 'lucide-react'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import MatchCard from '@/components/MatchCard'
 import { supabase, getMatchsLive, getMatchsDuJour, getProchainMatchs, getCompetitionsActives } from '@/lib/supabase'
 import { getSportConfig, formatDateLongue } from '@/lib/utils'
@@ -62,10 +63,10 @@ export default async function HomePage() {
                 Scores en direct, classements et calendriers de toutes les compétitions nationales camerounaises.
               </p>
               <div className="flex items-center gap-3 mt-6">
-                <Link href="/live" className="btn-primary flex items-center gap-2">
+                <Link href="/live" data-testid="btn-scores-live" className="btn-primary flex items-center gap-2">
                   <Zap size={16}/> Scores Live
                 </Link>
-                <Link href="/calendrier" className="btn-outline flex items-center gap-2">
+                <Link href="/calendrier" data-testid="btn-calendrier" className="btn-outline flex items-center gap-2">
                   <Calendar size={16}/> Calendrier
                 </Link>
               </div>
@@ -200,24 +201,7 @@ export default async function HomePage() {
         )}
       </div>
 
-      {/* FOOTER */}
-      <footer className="border-t border-border mt-16 bg-deep">
-        <div className="max-w-screen-2xl mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-              <div className="font-oswald text-cmr-yellow font-bold tracking-widest text-lg">CMR SPORTS HUB</div>
-              <div className="text-xs text-green-dim mt-1">© 2026 — Toutes les compétitions nationales du Cameroun</div>
-            </div>
-            <div className="flex gap-6 text-xs text-green-dim font-oswald tracking-wider">
-              <Link href="/about" className="hover:text-cmr-yellow transition-colors">À propos</Link>
-              <Link href="/api-doc" className="hover:text-cmr-yellow transition-colors">API</Link>
-
-
-            </div>
-          </div>
-        </div>
-        <div className="flag-strip"><div className="fg"/><div className="fr"/><div className="fy"/></div>
-      </footer>
+      <Footer />
     </div>
   )
 }
