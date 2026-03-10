@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Clock, MapPin, Tv, ChevronRight } from 'lucide-react'
 import type { MatchView } from '@/lib/supabase'
 import { formatHeure, formatDateCourte, getSportConfig } from '@/lib/utils'
+import FavoriteButton from '@/components/FavoriteButton'
 
 interface MatchCardProps {
   match: MatchView
@@ -79,11 +80,25 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
           {/* Home Team */}
           <div className="flex items-center gap-3">
-            <ClubBadge 
-              sigle={match.dom_sigle} 
-              logo={match.dom_logo} 
-              isWinner={isTermine && (match.dom_score ?? 0) > (match.ext_score ?? 0)}
-            />
+            <div className="relative">
+              <ClubBadge 
+                sigle={match.dom_sigle} 
+                logo={match.dom_logo} 
+                isWinner={isTermine && (match.dom_score ?? 0) > (match.ext_score ?? 0)}
+              />
+              <div className="absolute -bottom-1 -right-1">
+                <FavoriteButton 
+                  team={{ 
+                    id: match.dom_id, 
+                    nom: match.dom_nom, 
+                    sigle: match.dom_sigle,
+                    logo: match.dom_logo,
+                    sport: match.sport 
+                  }} 
+                  size="sm"
+                />
+              </div>
+            </div>
             <div className="min-w-0">
               <div className="font-semibold text-sm text-white truncate group-hover:text-cmr-gold transition-colors">
                 {match.dom_nom}
@@ -124,11 +139,25 @@ export default function MatchCard({ match, compact = false }: MatchCardProps) {
 
           {/* Away Team */}
           <div className="flex items-center gap-3 flex-row-reverse text-right">
-            <ClubBadge 
-              sigle={match.ext_sigle} 
-              logo={match.ext_logo}
-              isWinner={isTermine && (match.ext_score ?? 0) > (match.dom_score ?? 0)}
-            />
+            <div className="relative">
+              <ClubBadge 
+                sigle={match.ext_sigle} 
+                logo={match.ext_logo}
+                isWinner={isTermine && (match.ext_score ?? 0) > (match.dom_score ?? 0)}
+              />
+              <div className="absolute -bottom-1 -left-1">
+                <FavoriteButton 
+                  team={{ 
+                    id: match.ext_id, 
+                    nom: match.ext_nom, 
+                    sigle: match.ext_sigle,
+                    logo: match.ext_logo,
+                    sport: match.sport 
+                  }} 
+                  size="sm"
+                />
+              </div>
+            </div>
             <div className="min-w-0">
               <div className="font-semibold text-sm text-white truncate group-hover:text-cmr-gold transition-colors">
                 {match.ext_nom}

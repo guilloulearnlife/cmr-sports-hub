@@ -61,6 +61,15 @@
 - [x] Workflow d'encodage des scores
 - [x] Liste des fédérations et régions
 
+### Phase 4 - Système de Favoris
+- [x] Hook `useFavorites` avec localStorage
+- [x] Composant `FavoriteButton` avec animation cœur
+- [x] Composant `FavoritesBadge` avec compteur
+- [x] Page `/mes-favoris` avec groupement par sport
+- [x] Intégration dans Navbar (desktop + mobile)
+- [x] Intégration dans BottomNav mobile
+- [x] États vide et chargement stylisés
+
 ### Pages Créées/Améliorées
 - [x] `/` - Homepage avec hero immersif
 - [x] `/live` - Page live avec empty state animé
@@ -109,6 +118,8 @@
 - [ ] Countdown prochain match
 - [ ] Activity feed temps réel
 - [ ] Stats ticker défilant
+- [ ] Filtrer matchs par équipes favorites
+- [ ] Alertes personnalisées par équipe
 
 ## Notes Techniques
 

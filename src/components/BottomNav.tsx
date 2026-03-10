@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Zap, Calendar, Trophy, User } from 'lucide-react'
+import { Home, Zap, Calendar, Heart, User } from 'lucide-react'
+import { useFavorites } from '@/hooks/useFavorites'
 
 interface BottomNavProps {
   liveCount?: number
@@ -10,12 +11,13 @@ interface BottomNavProps {
 
 export default function BottomNav({ liveCount = 0 }: BottomNavProps) {
   const pathname = usePathname()
+  const { count: favCount } = useFavorites()
 
   const items = [
     { href: '/', icon: Home, label: 'Accueil' },
     { href: '/live', icon: Zap, label: 'Live', badge: liveCount },
+    { href: '/mes-favoris', icon: Heart, label: 'Favoris', badge: favCount, highlight: true },
     { href: '/calendrier', icon: Calendar, label: 'Matchs' },
-    { href: '/football', icon: Trophy, label: 'Sports' },
     { href: '/admin', icon: User, label: 'Compte' },
   ]
 
@@ -34,9 +36,9 @@ export default function BottomNav({ liveCount = 0 }: BottomNavProps) {
               data-testid={`nav-${item.label.toLowerCase()}`}
             >
               <div className="relative">
-                <item.icon size={22} />
+                <item.icon size={22} className={item.highlight && !isActive ? 'text-cmr-red' : ''} />
                 {item.badge && item.badge > 0 && (
-                  <span className="absolute -top-1 -right-2 w-4 h-4 bg-accent-live text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                  <span className={`absolute -top-1 -right-2 w-4 h-4 ${item.highlight ? 'bg-cmr-red' : 'bg-accent-live'} text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse`}>
                     {item.badge}
                   </span>
                 )}

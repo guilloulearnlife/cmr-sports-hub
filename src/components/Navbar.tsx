@@ -2,8 +2,9 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { Menu, X, Trophy, Calendar, Users, Settings, Zap, Search, ChevronDown } from 'lucide-react'
+import { Menu, X, Trophy, Calendar, Users, Settings, Zap, Search, ChevronDown, Heart } from 'lucide-react'
 import { SPORT_CONFIG } from '@/lib/utils'
+import { FavoritesBadge } from '@/components/FavoriteButton'
 import type { SportType } from '@/lib/supabase'
 
 const SPORTS_NAV: SportType[] = ['football', 'basketball', 'volleyball', 'handball', 'billard', 'boxe', 'athletisme']
@@ -108,6 +109,7 @@ export default function Navbar() {
 
           <NavLink href="/live" icon={<Zap size={16} />} label="En Direct" live />
           <NavLink href="/calendrier" icon={<Calendar size={16} />} label="Calendrier" />
+          <NavLink href="/mes-favoris" icon={<Heart size={16} />} label="Favoris" badge={<FavoritesBadge />} />
           <NavLink href="/joueurs" icon={<Users size={16} />} label="Joueurs" />
           <NavLink href="/recherche" icon={<Search size={16} />} label="Recherche" />
         </div>
@@ -174,6 +176,12 @@ export default function Navbar() {
               <span className="font-oswald tracking-wide text-accent-live">En Direct</span>
             </Link>
             
+            <Link href="/mes-favoris" onClick={() => setOpen(false)} className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-cmr-red/10 transition-all">
+              <Heart size={20} className="text-cmr-red" />
+              <span className="font-oswald tracking-wide text-white">Mes Favoris</span>
+              <FavoritesBadge />
+            </Link>
+            
             <Link href="/calendrier" onClick={() => setOpen(false)} className="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-cmr-gold/10 transition-all">
               <Calendar size={20} className="text-text-muted" />
               <span className="font-oswald tracking-wide">Calendrier</span>
@@ -204,12 +212,14 @@ function NavLink({
   href, 
   icon, 
   label, 
-  live 
+  live,
+  badge
 }: { 
   href: string
   icon: React.ReactNode
   label: string
-  live?: boolean 
+  live?: boolean
+  badge?: React.ReactNode
 }) {
   const pathname = usePathname()
   const active = pathname === href || pathname.startsWith(href + '/')
@@ -218,7 +228,7 @@ function NavLink({
     <Link
       href={href}
       className={`
-        flex items-center gap-2 px-4 py-2 rounded-xl font-oswald text-sm tracking-wider transition-all
+        flex items-center gap-2 px-4 py-2 rounded-xl font-oswald text-sm tracking-wider transition-all relative
         ${active
           ? 'bg-cmr-gold text-bg-primary font-bold shadow-glow'
           : live
@@ -229,6 +239,7 @@ function NavLink({
     >
       {icon}
       {label}
+      {badge && <span className="ml-1">{badge}</span>}
     </Link>
   )
 }
