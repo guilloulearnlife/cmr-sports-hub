@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { Menu, X, Trophy, Calendar, Users, Settings, Zap, Search, ChevronDown, Heart } from 'lucide-react'
 import { SPORT_CONFIG } from '@/lib/utils'
 import { FavoritesBadge } from '@/components/FavoriteButton'
+import { NotificationButton } from '@/components/NotificationSettings'
 import type { SportType } from '@/lib/supabase'
 
 const SPORTS_NAV: SportType[] = ['football', 'basketball', 'volleyball', 'handball', 'billard', 'boxe', 'athletisme']
@@ -116,6 +117,11 @@ export default function Navbar() {
 
         {/* Right side */}
         <div className="ml-auto flex items-center gap-3">
+          {/* Notification button */}
+          <div className="hidden md:block">
+            <NotificationButton />
+          </div>
+
           {/* Live badge */}
           <Link 
             href="/live" 

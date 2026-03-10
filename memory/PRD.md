@@ -70,6 +70,17 @@
 - [x] Intégration dans BottomNav mobile
 - [x] États vide et chargement stylisés
 
+### Phase 5 - Système de Notifications Push
+- [x] Hook `useNotifications` avec gestion permissions et préférences
+- [x] Composant `NotificationSettings` avec toggles configurables
+- [x] Composant `NotificationButton` pour navbar
+- [x] Page `/notifications` avec documentation types d'alertes
+- [x] Préférences : début match, buts, fin de match
+- [x] Option "équipes favorites uniquement"
+- [x] Bouton test notification
+- [x] Gestion états : supported, denied, enabled
+- [x] Intégration navbar et page d'accueil
+
 ### Pages Créées/Améliorées
 - [x] `/` - Homepage avec hero immersif
 - [x] `/live` - Page live avec empty state animé
@@ -111,7 +122,8 @@
 - [ ] Filtrage par fédération dans admin
 
 ### P2 (Nice-to-have)
-- [ ] Notifications push pour scores live
+- [ ] Backend pour stocker subscriptions push (Supabase)
+- [ ] Envoi notifications serveur lors d'événements
 - [ ] Mode offline complet avec cache
 - [ ] Partage social (WhatsApp, Facebook)
 - [ ] Dark/Light mode toggle

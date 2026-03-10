@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import MatchCard from '@/components/MatchCard'
 import BottomNav from '@/components/BottomNav'
+import { NotificationButton } from '@/components/NotificationSettings'
 import { getMatchsLive, getMatchsDuJour, getProchainMatchs, getCompetitionsActives } from '@/lib/supabase'
 import { getSportConfig, formatDateLongue } from '@/lib/utils'
 import type { MatchView, Competition } from '@/lib/supabase'
@@ -317,11 +318,8 @@ export default async function Home() {
             Activez les notifications pour recevoir les scores en direct et les alertes des matchs de vos équipes favorites.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <button className="btn-primary flex items-center gap-2">
-              <Bell size={18} />
-              Activer les notifications
-            </button>
-            <Link href="/about" className="btn-outline">
+            <NotificationButton className="!px-8 !py-4 text-base" />
+            <Link href="/notifications" className="btn-outline flex items-center gap-2">
               En savoir plus
             </Link>
           </div>
